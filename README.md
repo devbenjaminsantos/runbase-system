@@ -1,12 +1,14 @@
-# Olympus Admin
+# RunBase
 
-Painel de gestao operacional para acompanhamento de usuarios, pedidos, configuracoes e indicadores de operacao.
+Painel administrativo interno para gestao de clientes, planos, pedidos e acessos, com foco em operacoes recorrentes e controle por roles.
 
-O projeto nasceu como uma base visual de painel administrativo e agora esta sendo evoluido para um produto funcional, com backend em `Node.js/Express`, persistencia de dados, autenticacao e futuras camadas de monitoramento e auditoria.
+O projeto nasceu como uma base visual de painel administrativo chamada Olympus Admin e agora entra em uma nova fase como RunBase: um produto mais robusto com frontend em `Next.js`, backend em `ASP.NET Core Web API`, banco em `Azure SQL`, autenticacao com `JWT + Refresh Token` e RBAC real.
+
+O roadmap completo da nova fase esta em [`docs/RUNBASE_ROADMAP.md`](./docs/RUNBASE_ROADMAP.md).
 
 ## Visao do Produto
 
-O objetivo do Olympus Admin e se tornar um painel de gestao operacional para pequenas e medias operacoes, centralizando tarefas administrativas em uma interface simples e objetiva.
+O objetivo do RunBase e se tornar um painel de gestao operacional para pequenas e medias operacoes, centralizando tarefas administrativas em uma interface simples e objetiva.
 
 Na pratica, a proposta do produto e permitir:
 
@@ -68,9 +70,9 @@ A `V1` representa a fundacao do produto.
 
 ### Stack atual e direcao tecnica
 
-O backend sera mantido em `Node.js/Express` nas proximas versoes, porque a estrutura ja existe e isso acelera a transformacao do projeto em produto funcional.
+O backend atual em `Node.js/Express` sera tratado como prototipo funcional e referencia de produto. A nova fase tecnica do RunBase sera construida com `ASP.NET Core Web API`, `Next.js` e `Azure SQL`, seguindo o roadmap em `docs/RUNBASE_ROADMAP.md`.
 
-Quando fizer sentido adicionar uma camada complementar para relatorios, automacoes ou modulos mais analiticos, `Python/Django` pode entrar como evolucao estrategica. Por enquanto, a melhor decisao tecnica e manter o foco no ecossistema atual e consolidar a `V2`.
+Quando fizer sentido adicionar uma camada complementar para relatorios, automacoes ou modulos mais analiticos, ela deve ser avaliada depois que a base principal estiver publicada e testada.
 
 ## Como rodar localmente
 
