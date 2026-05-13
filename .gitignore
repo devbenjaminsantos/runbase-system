@@ -138,5 +138,11 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# .NET build output
+bin/
+obj/
+**/bin/
+**/obj/
+
 .DS_Store
 __MACOSX/

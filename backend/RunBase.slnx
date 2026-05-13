@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RunBase.Api/RunBase.Api.csproj" />
+    <Project Path="src/RunBase.Application/RunBase.Application.csproj" />
+    <Project Path="src/RunBase.Domain/RunBase.Domain.csproj" />
+    <Project Path="src/RunBase.Infrastructure/RunBase.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RunBase.Application.Tests/RunBase.Application.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -42,7 +42,7 @@ RunBase/
     frontend-static/
     backend-node/
   backend/
-    RunBase.sln
+    RunBase.slnx
     src/
       RunBase.Api/
       RunBase.Application/

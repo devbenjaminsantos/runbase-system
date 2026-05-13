@@ -22,19 +22,21 @@ Na pratica, a proposta do produto e permitir:
 
 Atualmente, o projeto possui:
 
-- frontend multi-pagina com dashboard, usuarios, pedidos e configuracoes
-- interacoes locais no navegador para demonstracao da experiencia
-- backend inicial estruturado com rotas para autenticacao, usuarios, pedidos, notificacoes e analytics
+- backend novo em ASP.NET Core Web API dentro de `backend/`
+- solution em camadas com `Api`, `Application`, `Domain` e `Infrastructure`
+- documentacao interativa da API com Scalar
+- endpoint `/health` funcional
+- prototipo antigo preservado em `legacy/`
 
-Hoje ele ja funciona muito bem como base de interface e arquitetura inicial, mas a evolucao principal da `V2` sera conectar o frontend ao backend para transformar a experiencia em uma operacao real.
+O prototipo antigo continua servindo como referencia de UX e produto, mas a fundacao tecnica nova do RunBase agora nasce em `.NET`.
 
 ## Preview
 
-![Demo](./media/demo.gif)
-![Tela inicial](./media/inicio.png)
-![Tela de usuarios](./media/usuario.png)
-![Tela de pedidos](./media/pedido.png)
-![Configuracoes](./media/configuracao.png)
+![Demo](./legacy/frontend-static/media/demo.gif)
+![Tela inicial](./legacy/frontend-static/media/inicio.png)
+![Tela de usuarios](./legacy/frontend-static/media/usuario.png)
+![Tela de pedidos](./legacy/frontend-static/media/pedido.png)
+![Configuracoes](./legacy/frontend-static/media/configuracao.png)
 
 ## Escopo da V1
 
@@ -70,21 +72,36 @@ A `V1` representa a fundacao do produto.
 
 ### Stack atual e direcao tecnica
 
-O backend atual em `Node.js/Express` sera tratado como prototipo funcional e referencia de produto. A nova fase tecnica do RunBase sera construida com `ASP.NET Core Web API`, `Next.js` e `Azure SQL`, seguindo o roadmap em `docs/RUNBASE_ROADMAP.md`.
+O backend antigo em `Node.js/Express` foi preservado em `legacy/backend-node` como prototipo funcional e referencia de produto. A nova fase tecnica do RunBase esta sendo construida com `ASP.NET Core Web API`, `Next.js` e `Azure SQL`, seguindo o roadmap em `docs/RUNBASE_ROADMAP.md`.
 
 Quando fizer sentido adicionar uma camada complementar para relatorios, automacoes ou modulos mais analiticos, ela deve ser avaliada depois que a base principal estiver publicada e testada.
 
 ## Como rodar localmente
 
-### Frontend
-
-1. Clone o repositorio
-2. Abra o projeto no editor
-3. Rode o frontend com `Live Server` ou abra `index.html`
-
-### Backend
+### Backend novo
 
 1. Acesse a pasta `backend`
+2. Restaure as dependencias com `dotnet restore RunBase.slnx`
+3. Rode o build com `dotnet build RunBase.slnx`
+4. Rode os testes com `dotnet test RunBase.slnx --no-build`
+5. Inicie a API com `dotnet run --project src/RunBase.Api/RunBase.Api.csproj --launch-profile http`
+6. Acesse `http://localhost:5140/health`
+7. Acesse o Scalar em `http://localhost:5140/scalar/v1`
+
+Connection string local ou de ambiente:
+
+- `ConnectionStrings__DefaultConnection`
+
+### Prototipo legado
+
+#### Frontend estatico
+
+1. Acesse a pasta `legacy/frontend-static`
+2. Rode com `Live Server` ou abra `index.html`
+
+#### Backend Node
+
+1. Acesse a pasta `legacy/backend-node/backend`
 2. Instale as dependencias com `npm install`
 3. Crie o arquivo `.env` com base em `.env.example`
 4. Inicie a API com `npm run dev`
@@ -92,15 +109,15 @@ Quando fizer sentido adicionar uma camada complementar para relatorios, automaco
 
 ### MySQL local com Docker
 
-1. Suba o banco com `docker compose up -d`
-2. Acesse `backend/.env` e altere `DATABASE_DRIVER=mysql`
+1. Na pasta `legacy`, suba o banco com `docker compose up -d`
+2. Acesse `legacy/backend-node/backend/.env` e altere `DATABASE_DRIVER=mysql`
 3. Inicialize o schema com `npm run db:mysql:init`
 4. Inicie a API com `npm run dev`
 
 ### Migrando dados do SQL.js para MySQL
 
 1. Garanta que o MySQL esteja rodando
-2. Na pasta `backend`, rode `npm run db:migrate:mysql`
+2. Na pasta `legacy/backend-node/backend`, rode `npm run db:migrate:mysql`
 3. Confirme no `.env` que `DATABASE_DRIVER=mysql`
 4. Inicie a API com `npm run dev`
 
@@ -110,7 +127,7 @@ Use esta validacao no fluxo local com `sqljs` antes de migrar para MySQL.
 
 ### Preparacao
 
-1. Na pasta `backend`, confirme `DATABASE_DRIVER=sqljs`
+1. Na pasta `legacy/backend-node/backend`, confirme `DATABASE_DRIVER=sqljs`
 2. Rode a API com `npm run dev`
 3. Abra o frontend com `Live Server` ou navegador local
 4. Acesse `login.html`

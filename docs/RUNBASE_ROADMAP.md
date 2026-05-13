@@ -130,12 +130,12 @@ Objetivo: criar a base ASP.NET Core Web API.
 
 Documento de inicio: [`RUNBASE_START.md`](./RUNBASE_START.md).
 
-- [ ] Criar solution `.NET`.
-- [ ] Criar projeto `RunBase.Api`.
-- [ ] Criar projetos de dominio/aplicacao se necessario, mantendo Clean Architecture leve.
-- [ ] Configurar Scalar para documentacao interativa da API.
-- [ ] Configurar health check.
-- [ ] Configurar connection string via environment variables.
+- [x] Criar solution `.NET`.
+- [x] Criar projeto `RunBase.Api`.
+- [x] Criar projetos de dominio/aplicacao se necessario, mantendo Clean Architecture leve.
+- [x] Configurar Scalar para documentacao interativa da API.
+- [x] Configurar health check.
+- [x] Configurar connection string via environment variables.
 - [ ] Criar pipeline basico de build.
 
 Estrutura sugerida:
