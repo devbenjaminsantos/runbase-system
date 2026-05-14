@@ -17,6 +17,8 @@ public static class DependencyInjection
         services.AddSingleton<IPasswordHasher, PlainTextPasswordHasher>();
         services.AddSingleton<IUserRepository, InMemoryUserRepository>();
         services.AddSingleton<IAccessTokenService, JwtAccessTokenService>();
+        services.AddSingleton<IRefreshTokenService, RandomRefreshTokenService>();
+        services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
 
         return services;
     }

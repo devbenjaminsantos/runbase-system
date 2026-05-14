@@ -7,15 +7,21 @@ public sealed class AuthService : IAuthService
     private readonly IUserRepository _users;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IAccessTokenService _accessTokenService;
+    private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IRefreshTokenRepository _refreshTokens;
 
     public AuthService(
         IUserRepository users,
         IPasswordHasher passwordHasher,
-        IAccessTokenService accessTokenService)
+        IAccessTokenService accessTokenService,
+        IRefreshTokenService refreshTokenService,
+        IRefreshTokenRepository refreshTokens)
     {
         _users = users;
         _passwordHasher = passwordHasher;
         _accessTokenService = accessTokenService;
+        _refreshTokenService = refreshTokenService;
+        _refreshTokens = refreshTokens;
     }
 
     public async Task<AuthResult<AuthTokenResponse>> LoginAsync(
@@ -35,11 +41,50 @@ public sealed class AuthService : IAuthService
         }
 
         var accessToken = _accessTokenService.Create(user);
+        var refreshToken = _refreshTokenService.Create(user);
+        await _refreshTokens.SaveAsync(refreshToken, cancellationToken);
 
-        return AuthResult<AuthTokenResponse>.Success(new AuthTokenResponse(
-            accessToken.Value,
-            accessToken.ExpiresAtUtc,
-            ToProfile(user)));
+        return AuthResult<AuthTokenResponse>.Success(ToTokenResponse(
+            user,
+            accessToken,
+            refreshToken));
+    }
+
+    public async Task<AuthResult<AuthTokenResponse>> RefreshAsync(
+        RefreshTokenRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var storedRefreshToken = await _refreshTokens.GetByValueAsync(
+            request.RefreshToken,
+            cancellationToken);
+
+        if (storedRefreshToken is null || !storedRefreshToken.IsActive(DateTimeOffset.UtcNow))
+        {
+            return AuthResult<AuthTokenResponse>.Failure(AuthError.InvalidRefreshToken);
+        }
+
+        var user = await _users.GetByIdAsync(storedRefreshToken.UserId, cancellationToken);
+
+        if (user is null)
+        {
+            return AuthResult<AuthTokenResponse>.Failure(AuthError.UserNotFound);
+        }
+
+        if (!user.CanAuthenticate)
+        {
+            return AuthResult<AuthTokenResponse>.Failure(AuthError.InactiveUser);
+        }
+
+        storedRefreshToken.Revoke(DateTimeOffset.UtcNow);
+
+        var accessToken = _accessTokenService.Create(user);
+        var nextRefreshToken = _refreshTokenService.Create(user);
+        await _refreshTokens.SaveAsync(nextRefreshToken, cancellationToken);
+
+        return AuthResult<AuthTokenResponse>.Success(ToTokenResponse(
+            user,
+            accessToken,
+            nextRefreshToken));
     }
 
     public async Task<AuthResult<UserProfileResponse>> GetCurrentUserAsync(
@@ -64,5 +109,17 @@ public sealed class AuthService : IAuthService
             user.Email,
             user.Role,
             user.Status);
+    }
+
+    private static AuthTokenResponse ToTokenResponse(
+        User user,
+        AccessToken accessToken,
+        RefreshToken refreshToken)
+    {
+        return new AuthTokenResponse(
+            accessToken.Value,
+            refreshToken.Value,
+            accessToken.ExpiresAtUtc,
+            ToProfile(user));
     }
 }

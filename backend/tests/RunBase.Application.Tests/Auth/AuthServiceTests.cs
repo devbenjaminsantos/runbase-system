@@ -17,6 +17,7 @@ public sealed class AuthServiceTests
         Assert.True(result.Succeeded);
         Assert.NotNull(result.Value);
         Assert.Equal("test-access-token", result.Value.AccessToken);
+        Assert.Equal("test-refresh-token-1", result.Value.RefreshToken);
         Assert.Equal(ActiveUserId, result.Value.User.Id);
         Assert.Equal(UserRole.Admin, result.Value.User.Role);
     }
@@ -39,7 +40,7 @@ public sealed class AuthServiceTests
             Guid.Parse("22222222-2222-2222-2222-222222222222"),
             "inactive@runbase.local",
             UserStatus.Inactive);
-        var service = CreateService(inactiveUser);
+        var service = CreateService(extraUsers: inactiveUser);
 
         var result = await service.LoginAsync(new LoginRequest("inactive@runbase.local", "Admin123!"));
 
@@ -60,7 +61,38 @@ public sealed class AuthServiceTests
         Assert.Equal("admin@runbase.local", result.Value.Email);
     }
 
-    private static AuthService CreateService(params User[] extraUsers)
+    [Fact]
+    public async Task RefreshAsync_WithValidRefreshToken_ReturnsNewTokenPair()
+    {
+        var refreshTokens = new FakeRefreshTokenRepository();
+        var service = CreateService(refreshTokens: refreshTokens);
+        var login = await service.LoginAsync(new LoginRequest("admin@runbase.local", "Admin123!"));
+
+        var result = await service.RefreshAsync(new RefreshTokenRequest(login.Value!.RefreshToken));
+
+        Assert.True(result.Succeeded);
+        Assert.NotNull(result.Value);
+        Assert.Equal("test-access-token", result.Value.AccessToken);
+        Assert.Equal("test-refresh-token-2", result.Value.RefreshToken);
+    }
+
+    [Fact]
+    public async Task RefreshAsync_WhenRefreshTokenIsReused_ReturnsInvalidRefreshToken()
+    {
+        var refreshTokens = new FakeRefreshTokenRepository();
+        var service = CreateService(refreshTokens: refreshTokens);
+        var login = await service.LoginAsync(new LoginRequest("admin@runbase.local", "Admin123!"));
+
+        await service.RefreshAsync(new RefreshTokenRequest(login.Value!.RefreshToken));
+        var result = await service.RefreshAsync(new RefreshTokenRequest(login.Value.RefreshToken));
+
+        Assert.False(result.Succeeded);
+        Assert.Equal(AuthError.InvalidRefreshToken, result.Error);
+    }
+
+    private static AuthService CreateService(
+        FakeRefreshTokenRepository? refreshTokens = null,
+        params User[] extraUsers)
     {
         var users = new List<User>
         {
@@ -71,7 +103,9 @@ public sealed class AuthServiceTests
         return new AuthService(
             new FakeUserRepository(users),
             new FakePasswordHasher(),
-            new FakeAccessTokenService());
+            new FakeAccessTokenService(),
+            new FakeRefreshTokenService(),
+            refreshTokens ?? new FakeRefreshTokenRepository());
     }
 
     private static User CreateUser(Guid id, string email, UserStatus status)
@@ -128,6 +162,45 @@ public sealed class AuthServiceTests
         public AccessToken Create(User user)
         {
             return new AccessToken("test-access-token", DateTimeOffset.UtcNow.AddMinutes(30));
+        }
+    }
+
+    private sealed class FakeRefreshTokenService : IRefreshTokenService
+    {
+        private int _sequence;
+
+        public RefreshToken Create(User user)
+        {
+            _sequence += 1;
+
+            return new RefreshToken(
+                $"test-refresh-token-{_sequence}",
+                user.Id,
+                DateTimeOffset.UtcNow.AddDays(7),
+                DateTimeOffset.UtcNow);
+        }
+    }
+
+    private sealed class FakeRefreshTokenRepository : IRefreshTokenRepository
+    {
+        private readonly Dictionary<string, RefreshToken> _refreshTokens = new();
+
+        public Task SaveAsync(
+            RefreshToken refreshToken,
+            CancellationToken cancellationToken = default)
+        {
+            _refreshTokens[refreshToken.Value] = refreshToken;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<RefreshToken?> GetByValueAsync(
+            string value,
+            CancellationToken cancellationToken = default)
+        {
+            _refreshTokens.TryGetValue(value, out var refreshToken);
+
+            return Task.FromResult(refreshToken);
         }
     }
 }

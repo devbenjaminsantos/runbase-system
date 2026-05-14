@@ -6,6 +6,10 @@ public interface IAuthService
         LoginRequest request,
         CancellationToken cancellationToken = default);
 
+    Task<AuthResult<AuthTokenResponse>> RefreshAsync(
+        RefreshTokenRequest request,
+        CancellationToken cancellationToken = default);
+
     Task<AuthResult<UserProfileResponse>> GetCurrentUserAsync(
         Guid userId,
         CancellationToken cancellationToken = default);

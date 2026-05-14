@@ -11,4 +11,6 @@ public sealed class JwtOptions
     public string SigningKey { get; init; } = "runbase-development-signing-key-change-before-production";
 
     public int AccessTokenMinutes { get; init; } = 60;
+
+    public int RefreshTokenDays { get; init; } = 7;
 }

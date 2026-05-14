@@ -101,6 +101,28 @@ auth.MapPost("/login", async (
 .WithName("Login")
 .WithSummary("Authenticates a user and returns an access token.");
 
+auth.MapPost("/refresh", async (
+    RefreshTokenRequest request,
+    IAuthService authService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await authService.RefreshAsync(request, cancellationToken);
+
+    if (result.Succeeded)
+    {
+        return Results.Ok(result.Value);
+    }
+
+    return result.Error switch
+    {
+        AuthError.InactiveUser => Results.Forbid(),
+        AuthError.UserNotFound => Results.NotFound(),
+        _ => Results.Unauthorized()
+    };
+})
+.WithName("RefreshToken")
+.WithSummary("Rotates a valid refresh token and returns a new token pair.");
+
 auth.MapGet("/me", async (
     ClaimsPrincipal principal,
     IAuthService authService,

@@ -135,15 +135,19 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 - [x] Endpoint protegido `/api/auth/me` criado.
 - [x] Seed de usuario Admin inicial criado.
 - [x] Testes unitarios iniciais do Auth criados.
+- [x] Refresh token criado.
+- [x] Rotacao de refresh token implementada.
 
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 5 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 7 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
 - [x] `POST /api/auth/login` retornou token JWT.
+- [x] `POST /api/auth/refresh` retornou novo par de tokens.
+- [x] Reutilizar refresh token antigo retornou 401.
 - [x] `GET /api/auth/me` retornou o usuario autenticado.
 
 ## Roles Planejadas
@@ -162,7 +166,7 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 ### Auth
 
 - [x] Login.
-- [ ] Refresh token.
+- [x] Refresh token.
 - [ ] Logout/revoke.
 - [x] Usuario logado em `/api/auth/me`.
 - [x] Roles no token.
@@ -211,10 +215,9 @@ A proxima etapa natural e completar o modulo de Auth na nova base .NET.
 Escopo recomendado:
 
 1. Trocar o hasher temporario por hash de senha adequado.
-2. Criar refresh token.
-3. Criar logout/revoke.
-4. Persistir usuarios e tokens em banco.
-5. Criar policies por role.
+2. Criar logout/revoke.
+3. Persistir usuarios e tokens em banco.
+4. Criar policies por role.
 
 Depois disso, entram os CRUDs protegidos por role.
 
