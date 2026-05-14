@@ -30,12 +30,12 @@ Ela serviu para validar a experiencia de uso, o layout geral e os principais flu
 
 ### O que foi feito
 
-- Dashboard visual com cards e grafico.
-- Tela de usuarios com CRUD local.
-- Tela de pedidos com tabela, filtros e exportacao CSV.
-- Tela de configuracoes com persistencia local.
-- Tema claro/escuro persistido no navegador.
-- Estrutura multi-pagina com HTML, CSS e JavaScript.
+- [x] Dashboard visual com cards e grafico.
+- [x] Tela de usuarios com CRUD local.
+- [x] Tela de pedidos com tabela, filtros e exportacao CSV.
+- [x] Tela de configuracoes com persistencia local.
+- [x] Tema claro/escuro persistido no navegador.
+- [x] Estrutura multi-pagina com HTML, CSS e JavaScript.
 
 ### Stack usada
 
@@ -59,15 +59,15 @@ Nesta fase, o objetivo foi sair de uma demonstracao visual e transformar a exper
 
 ### O que foi feito
 
-- Backend inicial em Node.js/Express.
-- Rotas para autenticacao, usuarios, pedidos, configuracoes, analytics e notificacoes.
-- Login com JWT.
-- Persistencia de usuarios e pedidos.
-- Configuracoes globais persistidas no backend.
-- Dashboard alimentado por metricas reais.
-- Estados reais de pedidos.
-- Testes basicos no backend.
-- Suporte a sql.js e MySQL.
+- [x] Backend inicial em Node.js/Express.
+- [x] Rotas para autenticacao, usuarios, pedidos, configuracoes, analytics e notificacoes.
+- [x] Login com JWT.
+- [x] Persistencia de usuarios e pedidos.
+- [x] Configuracoes globais persistidas no backend.
+- [x] Dashboard alimentado por metricas reais.
+- [x] Estados reais de pedidos.
+- [x] Testes basicos no backend.
+- [x] Suporte a sql.js e MySQL.
 
 ### Stack usada
 
@@ -112,30 +112,39 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 
 ### O que ja foi feito na V3
 
-- Codigo legado movido para `legacy/`.
-- Nova pasta `backend/` criada.
-- Solution `.NET` criada com `RunBase.slnx`.
-- Projetos criados:
-  - `RunBase.Api`
-  - `RunBase.Application`
-  - `RunBase.Domain`
-  - `RunBase.Infrastructure`
-  - `RunBase.Application.Tests`
-- Referencias entre camadas configuradas.
-- Scalar configurado para documentacao interativa da API.
-- Endpoint `/health` criado.
-- OpenAPI exposto em `/openapi/v1.json`.
-- Connection string preparada via `ConnectionStrings__DefaultConnection`.
-- Primeiro teste unitario criado para o servico de health.
-- Build e testes validados localmente.
+- [x] Codigo legado movido para `legacy/`.
+- [x] Nova pasta `backend/` criada.
+- [x] Solution `.NET` criada com `RunBase.slnx`.
+- [x] Projetos criados:
+  - [x] `RunBase.Api`
+  - [x] `RunBase.Application`
+  - [x] `RunBase.Domain`
+  - [x] `RunBase.Infrastructure`
+  - [x] `RunBase.Application.Tests`
+- [x] Referencias entre camadas configuradas.
+- [x] Scalar configurado para documentacao interativa da API.
+- [x] Endpoint `/health` criado.
+- [x] OpenAPI exposto em `/openapi/v1.json`.
+- [x] Connection string preparada via `ConnectionStrings__DefaultConnection`.
+- [x] Primeiro teste unitario criado para o servico de health.
+- [x] Build e testes validados localmente.
+- [x] Entidade `User` criada.
+- [x] Enums `UserRole` e `UserStatus` criados.
+- [x] Login basico criado em `/api/auth/login`.
+- [x] JWT emitido com claims de usuario e role.
+- [x] Endpoint protegido `/api/auth/me` criado.
+- [x] Seed de usuario Admin inicial criado.
+- [x] Testes unitarios iniciais do Auth criados.
 
 ### Validacoes feitas
 
-- `dotnet build RunBase.slnx` passou com 0 erros.
-- `dotnet test RunBase.slnx --no-build` passou com 1 teste aprovado.
-- `GET /health` retornou `Healthy`.
-- `/scalar/v1` retornou 200.
-- `/openapi/v1.json` retornou 200.
+- [x] `dotnet build RunBase.slnx` passou com 0 erros.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 5 testes aprovados.
+- [x] `GET /health` retornou `Healthy`.
+- [x] `/scalar/v1` retornou 200.
+- [x] `/openapi/v1.json` retornou 200.
+- [x] `POST /api/auth/login` retornou token JWT.
+- [x] `GET /api/auth/me` retornou o usuario autenticado.
 
 ## Roles Planejadas
 
@@ -152,11 +161,11 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 
 ### Auth
 
-- Login.
-- Refresh token.
-- Logout/revoke.
-- Usuario logado em `/api/auth/me`.
-- Roles no token.
+- [x] Login.
+- [ ] Refresh token.
+- [ ] Logout/revoke.
+- [x] Usuario logado em `/api/auth/me`.
+- [x] Roles no token.
 
 ### Users
 
@@ -197,19 +206,17 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 
 ## Proxima Etapa
 
-A proxima etapa natural e iniciar o modulo de Auth na nova base .NET.
+A proxima etapa natural e completar o modulo de Auth na nova base .NET.
 
 Escopo recomendado:
 
-1. Criar entidade `User`.
-2. Criar enum `UserRole` com `Admin`, `Manager`, `Support`, `Viewer`.
-3. Criar enum `UserStatus` com `Active`, `Inactive`.
-4. Criar endpoint de login.
-5. Gerar JWT com claims de usuario e role.
-6. Criar endpoint `/api/auth/me`.
-7. Criar seed de usuario Admin inicial.
+1. Trocar o hasher temporario por hash de senha adequado.
+2. Criar refresh token.
+3. Criar logout/revoke.
+4. Persistir usuarios e tokens em banco.
+5. Criar policies por role.
 
-Depois disso, entram refresh token, logout/revoke e protecao dos primeiros endpoints por role.
+Depois disso, entram os CRUDs protegidos por role.
 
 ## Documentos Relacionados
 

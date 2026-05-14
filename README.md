@@ -23,6 +23,8 @@ The new RunBase foundation currently includes:
 - Layered solution with `Api`, `Application`, `Domain`, and `Infrastructure`
 - Interactive API documentation with Scalar
 - Health endpoint at `/health`
+- Basic JWT login at `/api/auth/login`
+- Protected current-user endpoint at `/api/auth/me`
 - Initial xUnit test project
 - Legacy static frontend and Node backend preserved under `legacy/`
 
@@ -63,8 +65,19 @@ dotnet run --project src/RunBase.Api/RunBase.Api.csproj --launch-profile http
 Local endpoints:
 
 - API health: `http://localhost:5140/health`
+- Auth login: `POST http://localhost:5140/api/auth/login`
+- Current user: `GET http://localhost:5140/api/auth/me`
 - Scalar API reference: `http://localhost:5140/scalar/v1`
 - OpenAPI document: `http://localhost:5140/openapi/v1.json`
+
+Development admin seed:
+
+```json
+{
+  "email": "admin@runbase.local",
+  "password": "Admin123!"
+}
+```
 
 Environment connection string:
 

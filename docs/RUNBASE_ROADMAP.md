@@ -162,15 +162,15 @@ Criterio de pronto:
 
 Objetivo: implementar a base de seguranca antes dos CRUDs.
 
-- [ ] Criar entidade `User`.
-- [ ] Criar roles `Admin`, `Manager`, `Support`, `Viewer`.
-- [ ] Criar login.
-- [ ] Emitir JWT com claims de usuario e role.
+- [x] Criar entidade `User`.
+- [x] Criar roles `Admin`, `Manager`, `Support`, `Viewer`.
+- [x] Criar login.
+- [x] Emitir JWT com claims de usuario e role.
 - [ ] Criar refresh token.
 - [ ] Criar logout/revoke.
-- [ ] Criar endpoint `/api/auth/me`.
+- [x] Criar endpoint `/api/auth/me`.
 - [ ] Criar policies de autorizacao por role.
-- [ ] Criar seed de usuario Admin inicial.
+- [x] Criar seed de usuario Admin inicial.
 
 Criterio de pronto:
 
