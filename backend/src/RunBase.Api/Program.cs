@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -119,6 +120,7 @@ auth.MapPost("/login", async (
         _ => Results.Unauthorized()
     };
 })
+.AddEndpointFilter<ValidationFilter<LoginRequest>>()
 .WithName("Login")
 .WithSummary("Authenticates a user and returns an access token.");
 
@@ -141,6 +143,7 @@ auth.MapPost("/refresh", async (
         _ => Results.Unauthorized()
     };
 })
+.AddEndpointFilter<ValidationFilter<RefreshTokenRequest>>()
 .WithName("RefreshToken")
 .WithSummary("Rotates a valid refresh token and returns a new token pair.");
 
@@ -156,6 +159,7 @@ auth.MapPost("/logout", async (
         : Results.Unauthorized();
 })
 .RequireAuthorization()
+.AddEndpointFilter<ValidationFilter<LogoutRequest>>()
 .WithName("Logout")
 .WithSummary("Revokes the provided refresh token.");
 
@@ -224,6 +228,7 @@ users.MapPost("/", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<CreateUserRequest>>()
 .WithName("CreateUser")
 .WithSummary("Creates a user with an explicit role.");
 
@@ -244,6 +249,7 @@ users.MapPut("/{id:guid}", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<UpdateUserRequest>>()
 .WithName("UpdateUser")
 .WithSummary("Updates a user profile, role, and status.");
 
@@ -342,6 +348,7 @@ clients.MapPost("/", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<CreateClientRequest>>()
 .WithName("CreateClient")
 .WithSummary("Creates a client with a current plan stage.");
 
@@ -362,6 +369,7 @@ clients.MapPut("/{id:guid}", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<UpdateClientRequest>>()
 .WithName("UpdateClient")
 .WithSummary("Updates a client's profile, status, and plan stage.");
 
@@ -423,6 +431,7 @@ plans.MapPost("/", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<CreatePlanRequest>>()
 .WithName("CreatePlan")
 .WithSummary("Creates a plan.");
 
@@ -443,6 +452,7 @@ plans.MapPut("/{id:guid}", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<UpdatePlanRequest>>()
 .WithName("UpdatePlan")
 .WithSummary("Updates a plan.");
 
@@ -458,6 +468,7 @@ plans.MapPatch("/{id:guid}/active", async (
         ? Results.Ok(result.Value)
         : Results.NotFound();
 })
+.AddEndpointFilter<ValidationFilter<SetPlanActiveRequest>>()
 .WithName("SetPlanActive")
 .WithSummary("Toggles whether a plan is active.");
 
@@ -519,6 +530,7 @@ orders.MapPost("/", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<CreateOrderRequest>>()
 .WithName("CreateOrder")
 .WithSummary("Creates an order with a preserved final amount.");
 
@@ -540,6 +552,7 @@ orders.MapPut("/{id:guid}", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<UpdateOrderRequest>>()
 .WithName("UpdateOrder")
 .WithSummary("Updates an order.");
 
@@ -559,6 +572,7 @@ orders.MapPatch("/{id:guid}/status", async (
         _ => Results.BadRequest()
     };
 })
+.AddEndpointFilter<ValidationFilter<UpdateOrderStatusRequest>>()
 .WithName("UpdateOrderStatus")
 .WithSummary("Updates an order status.");
 
@@ -577,3 +591,43 @@ orders.MapDelete("/{id:guid}", async (
 .WithSummary("Deletes an order.");
 
 app.Run();
+
+internal sealed class ValidationFilter<TRequest> : IEndpointFilter
+{
+    public async ValueTask<object?> InvokeAsync(
+        EndpointFilterInvocationContext context,
+        EndpointFilterDelegate next)
+    {
+        var request = context.Arguments.OfType<TRequest>().FirstOrDefault();
+
+        if (request is null)
+        {
+            return await next(context);
+        }
+
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(request);
+
+        if (Validator.TryValidateObject(
+            request,
+            validationContext,
+            validationResults,
+            validateAllProperties: true))
+        {
+            return await next(context);
+        }
+
+        var errors = validationResults
+            .SelectMany(result => result.MemberNames.DefaultIfEmpty(string.Empty), (result, memberName) => new
+            {
+                MemberName = memberName,
+                ErrorMessage = result.ErrorMessage ?? "Invalid value."
+            })
+            .GroupBy(error => error.MemberName)
+            .ToDictionary(
+                group => group.Key,
+                group => group.Select(error => error.ErrorMessage).ToArray());
+
+        return Results.ValidationProblem(errors);
+    }
+}
