@@ -1,4 +1,5 @@
 using RunBase.Application.Clients;
+using RunBase.Application.Security;
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
 
@@ -20,6 +21,7 @@ public sealed class ClientsServiceTests
 
         Assert.True(result.Succeeded);
         Assert.Equal(PlanStage.Free, result.Value!.PlanStage);
+        Assert.Equal("ac***@demo.runbase.local", result.Value.MaskedEmail);
         Assert.Null(result.Value.NextBillingAt);
     }
 
@@ -59,6 +61,18 @@ public sealed class ClientsServiceTests
     }
 
     [Fact]
+    public async Task GetSensitiveDataByIdAsync_ReturnsRawEmailForExplicitSensitiveFlow()
+    {
+        var client = CreateClient("acme@demo.runbase.local");
+        var service = CreateService(client);
+
+        var result = await service.GetSensitiveDataByIdAsync(client.Id);
+
+        Assert.True(result.Succeeded);
+        Assert.Equal("acme@demo.runbase.local", result.Value!.Email);
+    }
+
+    [Fact]
     public async Task UpdateAsync_UpdatesStatusPlanAndBillingDate()
     {
         var client = CreateClient("acme@demo.runbase.local");
@@ -94,7 +108,9 @@ public sealed class ClientsServiceTests
 
     private static ClientsService CreateService(params Client[] clients)
     {
-        return new ClientsService(new FakeClientRepository(clients));
+        return new ClientsService(
+            new FakeClientRepository(clients),
+            new SensitiveDataMasker());
     }
 
     private static Client CreateClient(string email)

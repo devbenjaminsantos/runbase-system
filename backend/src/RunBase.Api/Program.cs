@@ -54,6 +54,12 @@ builder.Services.AddAuthorization(options =>
                 .RequireAuthenticatedUser()
                 .RequireRole(policy.Value.Select(role => role.ToString())));
     }
+
+    options.AddPolicy(
+        AuthPolicies.ViewSensitiveData,
+        builder => builder
+            .RequireAuthenticatedUser()
+            .RequireClaim(AuthPolicies.PermissionClaimType, AuthPolicies.ViewSensitiveData));
 });
 
 var app = builder.Build();
@@ -284,6 +290,21 @@ clients.MapGet("/{id:guid}", async (
 })
 .WithName("GetClient")
 .WithSummary("Gets a client by id.");
+
+clients.MapGet("/{id:guid}/sensitive", async (
+    Guid id,
+    IClientsService clientsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await clientsService.GetSensitiveDataByIdAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.Ok(result.Value)
+        : Results.NotFound();
+})
+.RequireAuthorization(AuthPolicies.ViewSensitiveData)
+.WithName("GetClientSensitiveData")
+.WithSummary("Gets sensitive client data when explicitly permitted.");
 
 clients.MapPost("/", async (
     CreateClientRequest request,

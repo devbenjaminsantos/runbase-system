@@ -6,7 +6,7 @@ namespace RunBase.Application.Clients;
 public sealed record ClientResponse(
     Guid Id,
     string Name,
-    string Email,
+    string MaskedEmail,
     ClientStatus Status,
     PlanStage PlanStage,
     DateTimeOffset? NextBillingAt,

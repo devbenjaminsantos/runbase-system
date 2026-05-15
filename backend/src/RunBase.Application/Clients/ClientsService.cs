@@ -1,15 +1,20 @@
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
+using RunBase.Application.Security;
 
 namespace RunBase.Application.Clients;
 
 public sealed class ClientsService : IClientsService
 {
     private readonly IClientRepository _clients;
+    private readonly ISensitiveDataMasker _sensitiveDataMasker;
 
-    public ClientsService(IClientRepository clients)
+    public ClientsService(
+        IClientRepository clients,
+        ISensitiveDataMasker sensitiveDataMasker)
     {
         _clients = clients;
+        _sensitiveDataMasker = sensitiveDataMasker;
     }
 
     public async Task<IReadOnlyList<ClientResponse>> ListAsync(
@@ -32,6 +37,19 @@ public sealed class ClientsService : IClientsService
         return client is null
             ? ClientResult<ClientResponse>.Failure(ClientError.NotFound)
             : ClientResult<ClientResponse>.Success(ToResponse(client));
+    }
+
+    public async Task<ClientResult<ClientSensitiveDataResponse>> GetSensitiveDataByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var client = await _clients.GetByIdAsync(id, cancellationToken);
+
+        return client is null
+            ? ClientResult<ClientSensitiveDataResponse>.Failure(ClientError.NotFound)
+            : ClientResult<ClientSensitiveDataResponse>.Success(new ClientSensitiveDataResponse(
+                client.Id,
+                client.Email));
     }
 
     public async Task<ClientResult<ClientResponse>> CreateAsync(
@@ -115,12 +133,12 @@ public sealed class ClientsService : IClientsService
         return ClientResult<bool>.Success(true);
     }
 
-    private static ClientResponse ToResponse(Client client)
+    private ClientResponse ToResponse(Client client)
     {
         return new ClientResponse(
             client.Id,
             client.Name,
-            client.Email,
+            _sensitiveDataMasker.MaskEmail(client.Email),
             client.Status,
             client.PlanStage,
             client.NextBillingAt,

@@ -4,6 +4,7 @@ using RunBase.Application.Clients;
 using RunBase.Application.Health;
 using RunBase.Application.Orders;
 using RunBase.Application.Plans;
+using RunBase.Application.Security;
 using RunBase.Application.Users;
 
 namespace RunBase.Application;
@@ -13,6 +14,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddSingleton<IHealthStatusService, HealthStatusService>();
+        services.AddSingleton<ISensitiveDataMasker, SensitiveDataMasker>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClientsService, ClientsService>();
         services.AddScoped<IOrdersService, OrdersService>();

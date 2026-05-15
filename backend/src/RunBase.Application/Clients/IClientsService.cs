@@ -9,6 +9,10 @@ public interface IClientsService
         Guid id,
         CancellationToken cancellationToken = default);
 
+    Task<ClientResult<ClientSensitiveDataResponse>> GetSensitiveDataByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
     Task<ClientResult<ClientResponse>> CreateAsync(
         CreateClientRequest request,
         CancellationToken cancellationToken = default);

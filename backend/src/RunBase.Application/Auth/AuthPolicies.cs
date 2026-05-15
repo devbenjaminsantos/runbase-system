@@ -4,12 +4,14 @@ namespace RunBase.Application.Auth;
 
 public static class AuthPolicies
 {
+    public const string PermissionClaimType = "permission";
     public const string ManageUsers = "RunBase.Users.Manage";
     public const string ManageClients = "RunBase.Clients.Manage";
     public const string ManagePlans = "RunBase.Plans.Manage";
     public const string ManageOrders = "RunBase.Orders.Manage";
     public const string ViewDashboard = "RunBase.Dashboard.View";
     public const string ManageSettings = "RunBase.Settings.Manage";
+    public const string ViewSensitiveData = "SensitiveData.View";
 
     public static IReadOnlyDictionary<string, IReadOnlyCollection<UserRole>> All { get; } =
         new Dictionary<string, IReadOnlyCollection<UserRole>>

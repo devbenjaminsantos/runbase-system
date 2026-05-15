@@ -207,10 +207,10 @@ Criterio de pronto:
 Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e reforcando confidencialidade, integridade e disponibilidade.
 
 - [x] Trocar hasher temporario por hash de senha adequado.
-- [ ] Criar camada de mascaramento para email, telefone e documentos.
+- [x] Criar camada de mascaramento para email, telefone e documentos.
 - [ ] Criar criptografia de dados sensiveis em repouso.
 - [ ] Separar permissao administrativa de permissao para visualizar dados sensiveis.
-- [ ] Criar policy `SensitiveData.View`.
+- [x] Criar policy `SensitiveData.View`.
 - [ ] Criar audit log para revelacao e alteracao de dados sensiveis.
 - [ ] Garantir que logs da aplicacao nao exponham dados sensiveis.
 - [ ] Preparar persistencia com consultas parametrizadas para prevenir SQL Injection.

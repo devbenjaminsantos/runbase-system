@@ -21,6 +21,12 @@ public sealed class AuthPoliciesTests
         AssertPolicy(AuthPolicies.ManageSettings, UserRole.Admin);
     }
 
+    [Fact]
+    public void All_DoesNotGrantSensitiveDataViewByRole()
+    {
+        Assert.False(AuthPolicies.All.ContainsKey(AuthPolicies.ViewSensitiveData));
+    }
+
     private static void AssertPolicy(string policyName, params UserRole[] expectedRoles)
     {
         Assert.True(AuthPolicies.All.TryGetValue(policyName, out var actualRoles));
