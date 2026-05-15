@@ -213,7 +213,7 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 - [x] Criar policy `SensitiveData.View`.
 - [x] Criar audit log para tentativa de visualizacao de dados sensiveis.
 - [x] Garantir que logs da aplicacao nao exponham dados sensiveis.
-- [ ] Preparar persistencia com consultas parametrizadas para prevenir SQL Injection.
+- [x] Preparar persistencia com EF Core/LINQ para prevenir SQL Injection.
 - [x] Adicionar validacoes de entrada para DTOs publicos.
 - [x] Adicionar rate limiting para login e endpoints sensiveis.
 - [ ] Criar gerador de dados sinteticos para clientes e assinaturas.

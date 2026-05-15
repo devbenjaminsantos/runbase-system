@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
 using RunBase.Application.Orders;
@@ -8,6 +9,7 @@ using RunBase.Application.Security;
 using RunBase.Infrastructure.Auth;
 using RunBase.Infrastructure.Clients;
 using RunBase.Infrastructure.Orders;
+using RunBase.Infrastructure.Persistence;
 using RunBase.Infrastructure.Plans;
 using RunBase.Infrastructure.Security;
 
@@ -20,6 +22,14 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         _ = configuration;
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        if (!string.IsNullOrWhiteSpace(connectionString))
+        {
+            services.AddDbContext<RunBaseDbContext>(options =>
+                options.UseSqlServer(connectionString));
+        }
+
         services.Configure<AuthSeedOptions>(configuration.GetSection(AuthSeedOptions.SectionName));
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();

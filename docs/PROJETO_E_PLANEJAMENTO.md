@@ -144,7 +144,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 65 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 66 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -237,7 +237,7 @@ O foco da V4 sera o CID:
 - [x] Policy `SensitiveData.View`.
 - [x] Audit log para tentativa de visualizacao de dados sensiveis.
 - [x] Logs sem exposicao de dados sensiveis.
-- [ ] Persistencia preparada contra SQL Injection com consultas parametrizadas.
+- [x] Persistencia preparada com EF Core/LINQ contra SQL Injection.
 - [x] Validacoes de entrada para DTOs publicos.
 - [x] Rate limiting para login e endpoints sensiveis.
 
@@ -253,16 +253,17 @@ A proxima etapa natural e iniciar a V4 com a fundacao de seguranca e privacidade
 
 Escopo recomendado:
 
-1. Preparar persistencia contra SQL Injection.
-2. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
-3. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
-4. Garantir que alteracoes sensiveis dependam de consentimento do usuario.
-5. Criar gerador de dados sinteticos para clientes e assinaturas.
+1. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
+2. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
+3. Garantir que alteracoes sensiveis dependam de consentimento do usuario.
+4. Criar gerador de dados sinteticos para clientes e assinaturas.
+5. Migrar repositórios em memoria para EF Core por modulo.
 
 Depois disso, entram dados sinteticos e interacoes de cobranca/promocao com seguranca desde a base.
 
 ## Documentos Relacionados
 
 - [Roadmap tecnico](./RUNBASE_ROADMAP.md)
+- [Regras de persistencia segura](./SECURITY_PERSISTENCE.md)
 - [Inicio da implementacao](./RUNBASE_START.md)
 - [README tecnico em ingles](../README.md)
