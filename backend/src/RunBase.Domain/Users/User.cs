@@ -39,4 +39,18 @@ public sealed class User
     public DateTimeOffset UpdatedAt { get; private set; }
 
     public bool CanAuthenticate => Status == UserStatus.Active;
+
+    public void Update(
+        string name,
+        string email,
+        UserRole role,
+        UserStatus status,
+        DateTimeOffset updatedAt)
+    {
+        Name = name;
+        Email = email;
+        Role = role;
+        Status = status;
+        UpdatedAt = updatedAt;
+    }
 }

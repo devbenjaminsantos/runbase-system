@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using RunBase.Application;
 using RunBase.Application.Auth;
 using RunBase.Application.Health;
+using RunBase.Application.Users;
 using RunBase.Infrastructure;
 using RunBase.Infrastructure.Auth;
 using Scalar.AspNetCore;
@@ -169,5 +170,87 @@ auth.MapGet("/me", async (
 .RequireAuthorization()
 .WithName("GetCurrentUser")
 .WithSummary("Returns the authenticated user's profile.");
+
+var users = app.MapGroup("/api/users")
+    .RequireAuthorization(AuthPolicies.ManageUsers)
+    .WithTags("Users");
+
+users.MapGet("/", async (
+    IUsersService usersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await usersService.ListAsync(cancellationToken);
+
+    return Results.Ok(result);
+})
+.WithName("ListUsers")
+.WithSummary("Lists users.");
+
+users.MapGet("/{id:guid}", async (
+    Guid id,
+    IUsersService usersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await usersService.GetByIdAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.Ok(result.Value)
+        : Results.NotFound();
+})
+.WithName("GetUser")
+.WithSummary("Gets a user by id.");
+
+users.MapPost("/", async (
+    CreateUserRequest request,
+    IUsersService usersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await usersService.CreateAsync(request, cancellationToken);
+
+    return result.Error switch
+    {
+        UserError.None => Results.Created($"/api/users/{result.Value!.Id}", result.Value),
+        UserError.EmailAlreadyExists => Results.Conflict(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("CreateUser")
+.WithSummary("Creates a user with an explicit role.");
+
+users.MapPut("/{id:guid}", async (
+    Guid id,
+    UpdateUserRequest request,
+    IUsersService usersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await usersService.UpdateAsync(id, request, cancellationToken);
+
+    return result.Error switch
+    {
+        UserError.None => Results.Ok(result.Value),
+        UserError.NotFound => Results.NotFound(),
+        UserError.EmailAlreadyExists => Results.Conflict(),
+        UserError.LastActiveAdminRequired => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("UpdateUser")
+.WithSummary("Updates a user profile, role, and status.");
+
+users.MapDelete("/{id:guid}", async (
+    Guid id,
+    IUsersService usersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await usersService.DeleteAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.NoContent()
+        : result.Error == UserError.NotFound
+            ? Results.NotFound()
+            : Results.BadRequest();
+})
+.WithName("DeleteUser")
+.WithSummary("Deletes a user.");
 
 app.Run();
