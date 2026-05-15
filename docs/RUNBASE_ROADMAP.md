@@ -208,7 +208,7 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 
 - [x] Trocar hasher temporario por hash de senha adequado.
 - [x] Criar camada de mascaramento para email, telefone e documentos.
-- [ ] Criar criptografia de dados sensiveis em repouso.
+- [x] Criar criptografia de dados sensiveis em repouso.
 - [ ] Separar permissao administrativa de permissao para visualizar dados sensiveis.
 - [x] Criar policy `SensitiveData.View`.
 - [x] Criar audit log para tentativa de visualizacao de dados sensiveis.

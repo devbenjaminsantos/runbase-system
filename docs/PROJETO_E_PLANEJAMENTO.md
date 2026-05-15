@@ -144,7 +144,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 66 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 71 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -232,7 +232,7 @@ O foco da V4 sera o CID:
 
 - [x] Hasher temporario substituido por PBKDF2 com salt por senha.
 - [x] Mascaramento padrao para email, telefone e documentos.
-- [ ] Criptografia de dados sensiveis em repouso.
+- [x] Criptografia de dados sensiveis em repouso.
 - [ ] Permissao sensivel separada do RBAC administrativo.
 - [x] Policy `SensitiveData.View`.
 - [x] Audit log para tentativa de visualizacao de dados sensiveis.
