@@ -144,7 +144,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 52 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 53 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -235,7 +235,8 @@ O foco da V4 sera o CID:
 - [ ] Criptografia de dados sensiveis em repouso.
 - [ ] Permissao sensivel separada do RBAC administrativo.
 - [x] Policy `SensitiveData.View`.
-- [ ] Audit log para revelacao e alteracao de dados sensiveis.
+- [x] Audit log para tentativa de visualizacao de dados sensiveis.
+- [ ] Audit log para alteracao de dados sensiveis.
 - [ ] Logs sem exposicao de dados sensiveis.
 - [ ] Persistencia preparada contra SQL Injection com consultas parametrizadas.
 - [ ] Validacoes de entrada para DTOs publicos.
@@ -253,11 +254,11 @@ A proxima etapa natural e iniciar a V4 com a fundacao de seguranca e privacidade
 
 Escopo recomendado:
 
-1. Criar audit log para dados sensiveis.
+1. Criar audit log para alteracao de dados sensiveis.
 2. Preparar persistencia contra SQL Injection.
 3. Adicionar rate limiting para login e endpoints sensiveis.
 4. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
-5. Criar fluxo auditado para conceder permissao sensivel.
+5. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
 
 Depois disso, entram dados sinteticos e interacoes de cobranca/promocao com seguranca desde a base.
 

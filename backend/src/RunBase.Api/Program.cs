@@ -9,6 +9,7 @@ using RunBase.Application.Clients;
 using RunBase.Application.Health;
 using RunBase.Application.Orders;
 using RunBase.Application.Plans;
+using RunBase.Application.Security;
 using RunBase.Application.Users;
 using RunBase.Infrastructure;
 using RunBase.Infrastructure.Auth;
@@ -291,20 +292,40 @@ clients.MapGet("/{id:guid}", async (
 .WithName("GetClient")
 .WithSummary("Gets a client by id.");
 
-clients.MapGet("/{id:guid}/sensitive", async (
+app.MapGet("/api/clients/{id:guid}/sensitive", async (
     Guid id,
-    IClientsService clientsService,
+    ClaimsPrincipal principal,
+    ISensitiveDataAccessAuditor sensitiveDataAccessAuditor,
     CancellationToken cancellationToken) =>
 {
-    var result = await clientsService.GetSensitiveDataByIdAsync(id, cancellationToken);
+    var userIdValue = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    Guid? userId = Guid.TryParse(userIdValue, out var parsedUserId)
+        ? parsedUserId
+        : null;
 
-    return result.Succeeded
-        ? Results.Ok(result.Value)
-        : Results.NotFound();
+    var decision = await sensitiveDataAccessAuditor.RecordAttemptAsync(
+        new SensitiveDataAccessAttempt(
+            userId,
+            principal.FindFirstValue(ClaimTypes.Email),
+            "Client",
+            id,
+            "Email"),
+        cancellationToken);
+
+    return Results.Json(
+        new
+        {
+            message = decision.Outcome == SensitiveDataAuditOutcome.Blocked
+                ? "Sensitive data access is blocked."
+                : "Sensitive data access is denied.",
+            outcome = decision.Outcome
+        },
+        statusCode: StatusCodes.Status403Forbidden);
 })
-.RequireAuthorization(AuthPolicies.ViewSensitiveData)
+.RequireAuthorization()
+.WithTags("Clients")
 .WithName("GetClientSensitiveData")
-.WithSummary("Gets sensitive client data when explicitly permitted.");
+.WithSummary("Audits and denies attempts to view sensitive client data.");
 
 clients.MapPost("/", async (
     CreateClientRequest request,

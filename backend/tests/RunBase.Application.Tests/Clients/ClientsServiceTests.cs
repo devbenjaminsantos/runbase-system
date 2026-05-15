@@ -61,18 +61,6 @@ public sealed class ClientsServiceTests
     }
 
     [Fact]
-    public async Task GetSensitiveDataByIdAsync_ReturnsRawEmailForExplicitSensitiveFlow()
-    {
-        var client = CreateClient("acme@demo.runbase.local");
-        var service = CreateService(client);
-
-        var result = await service.GetSensitiveDataByIdAsync(client.Id);
-
-        Assert.True(result.Succeeded);
-        Assert.Equal("acme@demo.runbase.local", result.Value!.Email);
-    }
-
-    [Fact]
     public async Task UpdateAsync_UpdatesStatusPlanAndBillingDate()
     {
         var client = CreateClient("acme@demo.runbase.local");

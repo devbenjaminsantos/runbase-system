@@ -39,19 +39,6 @@ public sealed class ClientsService : IClientsService
             : ClientResult<ClientResponse>.Success(ToResponse(client));
     }
 
-    public async Task<ClientResult<ClientSensitiveDataResponse>> GetSensitiveDataByIdAsync(
-        Guid id,
-        CancellationToken cancellationToken = default)
-    {
-        var client = await _clients.GetByIdAsync(id, cancellationToken);
-
-        return client is null
-            ? ClientResult<ClientSensitiveDataResponse>.Failure(ClientError.NotFound)
-            : ClientResult<ClientSensitiveDataResponse>.Success(new ClientSensitiveDataResponse(
-                client.Id,
-                client.Email));
-    }
-
     public async Task<ClientResult<ClientResponse>> CreateAsync(
         CreateClientRequest request,
         CancellationToken cancellationToken = default)

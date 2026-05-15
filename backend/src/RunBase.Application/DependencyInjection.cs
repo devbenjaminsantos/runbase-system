@@ -15,6 +15,7 @@ public static class DependencyInjection
     {
         services.AddSingleton<IHealthStatusService, HealthStatusService>();
         services.AddSingleton<ISensitiveDataMasker, SensitiveDataMasker>();
+        services.AddScoped<ISensitiveDataAccessAuditor, SensitiveDataAccessAuditor>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClientsService, ClientsService>();
         services.AddScoped<IOrdersService, OrdersService>();

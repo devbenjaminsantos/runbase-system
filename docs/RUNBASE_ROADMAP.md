@@ -32,12 +32,12 @@ O RunBase deve ser reconstruido de forma incremental, usando o produto atual com
 
 ## Roles
 
-| Role | Permissoes |
-| --- | --- |
-| Admin | Acesso total, incluindo usuarios, roles, planos, clientes, pedidos, dashboard e configuracoes. |
-| Manager | Gerencia clientes, planos e pedidos. Visualiza dashboard. Nao gerencia usuarios Admin. |
-| Support | Visualiza clientes e pedidos. Atualiza status de pedidos. |
-| Viewer | Acesso somente leitura ao dashboard e listas permitidas. |
+| Role    | Permissoes                                                                                     |
+| ------- | ---------------------------------------------------------------------------------------------- |
+| Admin   | Acesso total, incluindo usuarios, roles, planos, clientes, pedidos, dashboard e configuracoes. |
+| Manager | Gerencia clientes, planos e pedidos. Visualiza dashboard. Nao gerencia usuarios Admin.         |
+| Support | Visualiza clientes e pedidos. Atualiza status de pedidos.                                      |
+| Viewer  | Acesso somente leitura ao dashboard e listas permitidas.                                       |
 
 ## Dominio Inicial
 
@@ -211,7 +211,8 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 - [ ] Criar criptografia de dados sensiveis em repouso.
 - [ ] Separar permissao administrativa de permissao para visualizar dados sensiveis.
 - [x] Criar policy `SensitiveData.View`.
-- [ ] Criar audit log para revelacao e alteracao de dados sensiveis.
+- [x] Criar audit log para tentativa de visualizacao de dados sensiveis.
+
 - [ ] Garantir que logs da aplicacao nao exponham dados sensiveis.
 - [ ] Preparar persistencia com consultas parametrizadas para prevenir SQL Injection.
 - [ ] Adicionar validacoes de entrada para DTOs publicos.
