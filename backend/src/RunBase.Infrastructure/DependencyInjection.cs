@@ -2,8 +2,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
+using RunBase.Application.Plans;
 using RunBase.Infrastructure.Auth;
 using RunBase.Infrastructure.Clients;
+using RunBase.Infrastructure.Plans;
 
 namespace RunBase.Infrastructure;
 
@@ -22,6 +24,7 @@ public static class DependencyInjection
         services.AddSingleton<IRefreshTokenService, RandomRefreshTokenService>();
         services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
         services.AddSingleton<IClientRepository, InMemoryClientRepository>();
+        services.AddSingleton<IPlanRepository, InMemoryPlanRepository>();
 
         return services;
     }

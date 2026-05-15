@@ -7,6 +7,7 @@ using RunBase.Application;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
 using RunBase.Application.Health;
+using RunBase.Application.Plans;
 using RunBase.Application.Users;
 using RunBase.Infrastructure;
 using RunBase.Infrastructure.Auth;
@@ -334,5 +335,101 @@ clients.MapDelete("/{id:guid}", async (
 })
 .WithName("DeleteClient")
 .WithSummary("Deletes a client.");
+
+var plans = app.MapGroup("/api/plans")
+    .RequireAuthorization(AuthPolicies.ManagePlans)
+    .WithTags("Plans");
+
+plans.MapGet("/", async (
+    IPlansService plansService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await plansService.ListAsync(cancellationToken);
+
+    return Results.Ok(result);
+})
+.WithName("ListPlans")
+.WithSummary("Lists plans.");
+
+plans.MapGet("/{id:guid}", async (
+    Guid id,
+    IPlansService plansService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await plansService.GetByIdAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.Ok(result.Value)
+        : Results.NotFound();
+})
+.WithName("GetPlan")
+.WithSummary("Gets a plan by id.");
+
+plans.MapPost("/", async (
+    CreatePlanRequest request,
+    IPlansService plansService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await plansService.CreateAsync(request, cancellationToken);
+
+    return result.Error switch
+    {
+        PlanError.None => Results.Created($"/api/plans/{result.Value!.Id}", result.Value),
+        PlanError.StageAlreadyExists => Results.Conflict(),
+        PlanError.InvalidConfiguration => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("CreatePlan")
+.WithSummary("Creates a plan.");
+
+plans.MapPut("/{id:guid}", async (
+    Guid id,
+    UpdatePlanRequest request,
+    IPlansService plansService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await plansService.UpdateAsync(id, request, cancellationToken);
+
+    return result.Error switch
+    {
+        PlanError.None => Results.Ok(result.Value),
+        PlanError.NotFound => Results.NotFound(),
+        PlanError.StageAlreadyExists => Results.Conflict(),
+        PlanError.InvalidConfiguration => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("UpdatePlan")
+.WithSummary("Updates a plan.");
+
+plans.MapPatch("/{id:guid}/active", async (
+    Guid id,
+    SetPlanActiveRequest request,
+    IPlansService plansService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await plansService.SetActiveAsync(id, request.IsActive, cancellationToken);
+
+    return result.Succeeded
+        ? Results.Ok(result.Value)
+        : Results.NotFound();
+})
+.WithName("SetPlanActive")
+.WithSummary("Toggles whether a plan is active.");
+
+plans.MapDelete("/{id:guid}", async (
+    Guid id,
+    IPlansService plansService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await plansService.DeleteAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.NoContent()
+        : Results.NotFound();
+})
+.WithName("DeletePlan")
+.WithSummary("Deletes a plan.");
 
 app.Run();

@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
 using RunBase.Application.Health;
+using RunBase.Application.Plans;
 using RunBase.Application.Users;
 
 namespace RunBase.Application;
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddSingleton<IHealthStatusService, HealthStatusService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClientsService, ClientsService>();
+        services.AddScoped<IPlansService, PlansService>();
         services.AddScoped<IUsersService, UsersService>();
 
         return services;
