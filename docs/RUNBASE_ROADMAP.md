@@ -136,7 +136,7 @@ Documento de inicio: [`RUNBASE_START.md`](./RUNBASE_START.md).
 - [x] Configurar Scalar para documentacao interativa da API.
 - [x] Configurar health check.
 - [x] Configurar connection string via environment variables.
-- [ ] Criar pipeline basico de build.
+- [x] Criar pipeline basico de build.
 
 Estrutura sugerida:
 
@@ -187,6 +187,7 @@ Objetivo: implementar os CRUDs centrais do produto.
 - [ ] Users CRUD.
 - [ ] Clients CRUD.
 - [ ] Plans CRUD.
+- [x] Definir estagios iniciais de plano: `Trial`, `Free`, `Plus`, `Premium`.
 - [ ] Orders CRUD.
 - [ ] Toggle de plano ativo/inativo.
 - [ ] Atualizacao de status de pedido.
@@ -201,7 +202,26 @@ Criterio de pronto:
 - Viewer nao consegue alterar dados.
 - Testes cobrem regras principais.
 
-### Milestone 4 - Frontend Foundation
+### Milestone 4 - Dados Demo, Privacidade e Interacoes
+
+Objetivo: deixar a base backend pronta para demonstrar operacao realista sem expor dados sensiveis.
+
+- [ ] Criar gerador de dados sinteticos para clientes e assinaturas.
+- [ ] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
+- [ ] Criar camada de mascaramento para email, telefone e documentos.
+- [ ] Criar criptografia de dados sensiveis em repouso.
+- [ ] Separar permissao de gestao de permissao para visualizar dados sensiveis.
+- [ ] Criar audit log para revelacao de dados sensiveis.
+- [ ] Modelar campanhas de notificacao: promocao, cobranca a vencer e cobranca em atraso.
+
+Criterio de pronto:
+
+- Ambiente demo tem clientes e assinaturas realistas sem dados reais.
+- Admin comum nao ve dados sensiveis completos por padrao.
+- Visualizacao sensivel exige permissao explicita.
+- Acoes sensiveis ficam rastreadas para auditoria.
+
+### Milestone 5 - Frontend Foundation
 
 Objetivo: criar o admin em Next.js consumindo a API real.
 
@@ -231,7 +251,7 @@ Criterio de pronto:
 - Menu muda de acordo com a role.
 - Nenhuma tela principal depende de mock fixo.
 
-### Milestone 5 - Telas Principais
+### Milestone 6 - Telas Principais
 
 Objetivo: entregar o fluxo operacional completo.
 
@@ -249,7 +269,7 @@ Criterio de pronto:
 - Dashboard reflete dados reais.
 - Erros da API aparecem de forma clara para o usuario.
 
-### Milestone 6 - Azure SQL e Deploy
+### Milestone 7 - Azure SQL e Deploy
 
 Objetivo: colocar o produto em ambiente cloud.
 
@@ -266,7 +286,7 @@ Criterio de pronto:
 - Backend e frontend fazem deploy automaticamente.
 - Ambiente publicado usa Azure SQL.
 
-### Milestone 7 - Qualidade e Produto
+### Milestone 8 - Qualidade e Produto
 
 Objetivo: amadurecer o RunBase como produto demonstravel.
 

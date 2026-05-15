@@ -126,6 +126,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 - [x] Endpoint `/health` criado.
 - [x] OpenAPI exposto em `/openapi/v1.json`.
 - [x] Connection string preparada via `ConnectionStrings__DefaultConnection`.
+- [x] Pipeline basico de build/test criado com GitHub Actions.
 - [x] Primeiro teste unitario criado para o servico de health.
 - [x] Build e testes validados localmente.
 - [x] Entidade `User` criada.
@@ -191,6 +192,8 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 ### Plans
 
 - CRUD de planos.
+- [x] Estagios iniciais definidos: `Trial`, `Free`, `Plus` e `Premium`.
+- [x] Datas de cobranca iniciadas no dominio para planos pagos.
 - Toggle ativo/inativo.
 - Preco e ciclo de cobranca.
 
@@ -213,9 +216,19 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 - Perfil do usuario logado.
 - Configuracoes basicas da operacao.
 
+### Dados Demo, Privacidade e Interacoes
+
+- [ ] Geracao de clientes e assinaturas com dados sinteticos.
+- [ ] Origem dos dados separada entre `Demo`, `Manual` e `Imported`.
+- [ ] Mascaramento padrao para email, telefone e documentos.
+- [ ] Criptografia de dados sensiveis em repouso.
+- [ ] Permissao sensivel separada do RBAC administrativo.
+- [ ] Audit log para revelacao de dados sensiveis.
+- [ ] Campanhas de notificacao para promocao, cobranca a vencer e cobranca em atraso.
+
 ## Proxima Etapa
 
-A proxima etapa natural e completar o modulo de Auth na nova base .NET.
+A proxima etapa natural e consolidar os modulos operacionais da V3 na nova base .NET.
 
 Escopo recomendado:
 
@@ -223,8 +236,9 @@ Escopo recomendado:
 2. Persistir usuarios e tokens em banco.
 3. Preparar CRUD inicial de usuarios com escolha explicita de role.
 4. Aplicar policies nos CRUDs conforme cada modulo nascer.
+5. Depois da fundacao backend, criar a aba de dados demo, privacidade e interacoes.
 
-Depois disso, entram os CRUDs protegidos por role.
+Depois disso, a aba de dados demo, privacidade e interacoes entra para deixar o produto demonstravel com seguranca.
 
 ## Documentos Relacionados
 
