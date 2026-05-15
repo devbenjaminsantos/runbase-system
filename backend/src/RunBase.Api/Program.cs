@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using RunBase.Application;
 using RunBase.Application.Auth;
+using RunBase.Application.Clients;
 using RunBase.Application.Health;
 using RunBase.Application.Users;
 using RunBase.Infrastructure;
@@ -252,5 +253,86 @@ users.MapDelete("/{id:guid}", async (
 })
 .WithName("DeleteUser")
 .WithSummary("Deletes a user.");
+
+var clients = app.MapGroup("/api/clients")
+    .RequireAuthorization(AuthPolicies.ManageClients)
+    .WithTags("Clients");
+
+clients.MapGet("/", async (
+    IClientsService clientsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await clientsService.ListAsync(cancellationToken);
+
+    return Results.Ok(result);
+})
+.WithName("ListClients")
+.WithSummary("Lists clients.");
+
+clients.MapGet("/{id:guid}", async (
+    Guid id,
+    IClientsService clientsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await clientsService.GetByIdAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.Ok(result.Value)
+        : Results.NotFound();
+})
+.WithName("GetClient")
+.WithSummary("Gets a client by id.");
+
+clients.MapPost("/", async (
+    CreateClientRequest request,
+    IClientsService clientsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await clientsService.CreateAsync(request, cancellationToken);
+
+    return result.Error switch
+    {
+        ClientError.None => Results.Created($"/api/clients/{result.Value!.Id}", result.Value),
+        ClientError.EmailAlreadyExists => Results.Conflict(),
+        ClientError.BillingDateRequired => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("CreateClient")
+.WithSummary("Creates a client with a current plan stage.");
+
+clients.MapPut("/{id:guid}", async (
+    Guid id,
+    UpdateClientRequest request,
+    IClientsService clientsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await clientsService.UpdateAsync(id, request, cancellationToken);
+
+    return result.Error switch
+    {
+        ClientError.None => Results.Ok(result.Value),
+        ClientError.NotFound => Results.NotFound(),
+        ClientError.EmailAlreadyExists => Results.Conflict(),
+        ClientError.BillingDateRequired => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("UpdateClient")
+.WithSummary("Updates a client's profile, status, and plan stage.");
+
+clients.MapDelete("/{id:guid}", async (
+    Guid id,
+    IClientsService clientsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await clientsService.DeleteAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.NoContent()
+        : Results.NotFound();
+})
+.WithName("DeleteClient")
+.WithSummary("Deletes a client.");
 
 app.Run();

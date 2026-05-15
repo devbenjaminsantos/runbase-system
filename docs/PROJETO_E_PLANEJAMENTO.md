@@ -144,7 +144,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 23 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 29 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -185,9 +185,9 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 
 ### Clients
 
-- CRUD de clientes.
-- Status `Active`, `Inactive` ou `Suspended`.
-- Relacao com plano atual.
+- [x] CRUD inicial de clientes.
+- [x] Status `Active`, `Inactive` ou `Suspended`.
+- [x] Relacao com plano atual.
 
 ### Plans
 

@@ -185,7 +185,7 @@ Criterio de pronto:
 Objetivo: implementar os CRUDs centrais do produto.
 
 - [x] Users CRUD.
-- [ ] Clients CRUD.
+- [x] Clients CRUD.
 - [ ] Plans CRUD.
 - [x] Definir estagios iniciais de plano: `Trial`, `Free`, `Plus`, `Premium`.
 - [ ] Orders CRUD.
