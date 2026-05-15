@@ -116,6 +116,25 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.Use(async (context, next) =>
+{
+    var logger = context.RequestServices
+        .GetRequiredService<ILoggerFactory>()
+        .CreateLogger("RunBase.SafeRequestLog");
+
+    try
+    {
+        await next();
+    }
+    finally
+    {
+        logger.LogInformation(
+            "HTTP {Method} {Path} responded {StatusCode}",
+            context.Request.Method,
+            context.Request.Path.Value,
+            context.Response.StatusCode);
+    }
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();

@@ -14,6 +14,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddSingleton<IHealthStatusService, HealthStatusService>();
+        services.AddSingleton<ISensitiveLogSanitizer, SensitiveLogSanitizer>();
         services.AddSingleton<ISensitiveDataMasker, SensitiveDataMasker>();
         services.AddScoped<ISensitiveDataAccessAuditor, SensitiveDataAccessAuditor>();
         services.AddScoped<IAuthService, AuthService>();
