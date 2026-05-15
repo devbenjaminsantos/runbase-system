@@ -169,7 +169,7 @@ Objetivo: implementar a base de seguranca antes dos CRUDs.
 - [x] Criar refresh token.
 - [x] Criar logout/revoke.
 - [x] Criar endpoint `/api/auth/me`.
-- [ ] Criar policies de autorizacao por role.
+- [x] Criar policies de autorizacao por role.
 - [x] Criar seed de usuario Admin inicial.
 
 Criterio de pronto:

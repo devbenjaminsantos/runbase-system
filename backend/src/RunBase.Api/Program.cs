@@ -40,7 +40,17 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    foreach (var policy in AuthPolicies.All)
+    {
+        options.AddPolicy(
+            policy.Key,
+            builder => builder
+                .RequireAuthenticatedUser()
+                .RequireRole(policy.Value.Select(role => role.ToString())));
+    }
+});
 
 var app = builder.Build();
 

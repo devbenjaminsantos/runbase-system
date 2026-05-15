@@ -138,11 +138,12 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 - [x] Refresh token criado.
 - [x] Rotacao de refresh token implementada.
 - [x] Logout/revoke de refresh token implementado.
+- [x] Policies de autorizacao por role criadas.
 
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 9 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 10 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -173,6 +174,7 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 - [x] Logout/revoke.
 - [x] Usuario logado em `/api/auth/me`.
 - [x] Roles no token.
+- [x] Policies por role.
 
 ### Users
 
@@ -219,8 +221,8 @@ Escopo recomendado:
 
 1. Trocar o hasher temporario por hash de senha adequado.
 2. Persistir usuarios e tokens em banco.
-3. Criar policies por role.
-4. Preparar CRUD inicial de usuarios com escolha explicita de role.
+3. Preparar CRUD inicial de usuarios com escolha explicita de role.
+4. Aplicar policies nos CRUDs conforme cada modulo nascer.
 
 Depois disso, entram os CRUDs protegidos por role.
 
