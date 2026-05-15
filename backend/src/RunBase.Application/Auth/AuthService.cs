@@ -75,7 +75,10 @@ public sealed class AuthService : IAuthService
             return AuthResult<AuthTokenResponse>.Failure(AuthError.InactiveUser);
         }
 
-        storedRefreshToken.Revoke(DateTimeOffset.UtcNow);
+        await _refreshTokens.RevokeAsync(
+            storedRefreshToken,
+            DateTimeOffset.UtcNow,
+            cancellationToken);
 
         var accessToken = _accessTokenService.Create(user);
         var nextRefreshToken = _refreshTokenService.Create(user);
@@ -85,6 +88,27 @@ public sealed class AuthService : IAuthService
             user,
             accessToken,
             nextRefreshToken));
+    }
+
+    public async Task<AuthResult<bool>> LogoutAsync(
+        LogoutRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var storedRefreshToken = await _refreshTokens.GetByValueAsync(
+            request.RefreshToken,
+            cancellationToken);
+
+        if (storedRefreshToken is null || !storedRefreshToken.IsActive(DateTimeOffset.UtcNow))
+        {
+            return AuthResult<bool>.Failure(AuthError.InvalidRefreshToken);
+        }
+
+        await _refreshTokens.RevokeAsync(
+            storedRefreshToken,
+            DateTimeOffset.UtcNow,
+            cancellationToken);
+
+        return AuthResult<bool>.Success(true);
     }
 
     public async Task<AuthResult<UserProfileResponse>> GetCurrentUserAsync(

@@ -24,4 +24,15 @@ public sealed class InMemoryRefreshTokenRepository : IRefreshTokenRepository
 
         return Task.FromResult(refreshToken);
     }
+
+    public Task RevokeAsync(
+        RefreshToken refreshToken,
+        DateTimeOffset revokedAtUtc,
+        CancellationToken cancellationToken = default)
+    {
+        refreshToken.Revoke(revokedAtUtc);
+        _refreshTokens[refreshToken.Value] = refreshToken;
+
+        return Task.CompletedTask;
+    }
 }

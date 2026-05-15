@@ -9,4 +9,9 @@ public interface IRefreshTokenRepository
     Task<RefreshToken?> GetByValueAsync(
         string value,
         CancellationToken cancellationToken = default);
+
+    Task RevokeAsync(
+        RefreshToken refreshToken,
+        DateTimeOffset revokedAtUtc,
+        CancellationToken cancellationToken = default);
 }

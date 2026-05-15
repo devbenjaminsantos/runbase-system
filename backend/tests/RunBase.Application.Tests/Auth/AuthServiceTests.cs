@@ -90,6 +90,32 @@ public sealed class AuthServiceTests
         Assert.Equal(AuthError.InvalidRefreshToken, result.Error);
     }
 
+    [Fact]
+    public async Task LogoutAsync_WithValidRefreshToken_RevokesRefreshToken()
+    {
+        var refreshTokens = new FakeRefreshTokenRepository();
+        var service = CreateService(refreshTokens: refreshTokens);
+        var login = await service.LoginAsync(new LoginRequest("admin@runbase.local", "Admin123!"));
+
+        var logout = await service.LogoutAsync(new LogoutRequest(login.Value!.RefreshToken));
+        var refresh = await service.RefreshAsync(new RefreshTokenRequest(login.Value.RefreshToken));
+
+        Assert.True(logout.Succeeded);
+        Assert.False(refresh.Succeeded);
+        Assert.Equal(AuthError.InvalidRefreshToken, refresh.Error);
+    }
+
+    [Fact]
+    public async Task LogoutAsync_WithInvalidRefreshToken_ReturnsInvalidRefreshToken()
+    {
+        var service = CreateService();
+
+        var result = await service.LogoutAsync(new LogoutRequest("missing-refresh-token"));
+
+        Assert.False(result.Succeeded);
+        Assert.Equal(AuthError.InvalidRefreshToken, result.Error);
+    }
+
     private static AuthService CreateService(
         FakeRefreshTokenRepository? refreshTokens = null,
         params User[] extraUsers)
@@ -201,6 +227,17 @@ public sealed class AuthServiceTests
             _refreshTokens.TryGetValue(value, out var refreshToken);
 
             return Task.FromResult(refreshToken);
+        }
+
+        public Task RevokeAsync(
+            RefreshToken refreshToken,
+            DateTimeOffset revokedAtUtc,
+            CancellationToken cancellationToken = default)
+        {
+            refreshToken.Revoke(revokedAtUtc);
+            _refreshTokens[refreshToken.Value] = refreshToken;
+
+            return Task.CompletedTask;
         }
     }
 }

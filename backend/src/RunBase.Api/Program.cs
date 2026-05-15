@@ -123,6 +123,21 @@ auth.MapPost("/refresh", async (
 .WithName("RefreshToken")
 .WithSummary("Rotates a valid refresh token and returns a new token pair.");
 
+auth.MapPost("/logout", async (
+    LogoutRequest request,
+    IAuthService authService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await authService.LogoutAsync(request, cancellationToken);
+
+    return result.Succeeded
+        ? Results.NoContent()
+        : Results.Unauthorized();
+})
+.RequireAuthorization()
+.WithName("Logout")
+.WithSummary("Revokes the provided refresh token.");
+
 auth.MapGet("/me", async (
     ClaimsPrincipal principal,
     IAuthService authService,

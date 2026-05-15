@@ -25,6 +25,7 @@ The new RunBase foundation currently includes:
 - Health endpoint at `/health`
 - Basic JWT login at `/api/auth/login`
 - Refresh token rotation at `/api/auth/refresh`
+- Refresh token revoke/logout at `/api/auth/logout`
 - Protected current-user endpoint at `/api/auth/me`
 - Initial xUnit test project
 - Legacy static frontend and Node backend preserved under `legacy/`
@@ -68,6 +69,7 @@ Local endpoints:
 - API health: `http://localhost:5140/health`
 - Auth login: `POST http://localhost:5140/api/auth/login`
 - Auth refresh: `POST http://localhost:5140/api/auth/refresh`
+- Auth logout: `POST http://localhost:5140/api/auth/logout`
 - Current user: `GET http://localhost:5140/api/auth/me`
 - Scalar API reference: `http://localhost:5140/scalar/v1`
 - OpenAPI document: `http://localhost:5140/openapi/v1.json`

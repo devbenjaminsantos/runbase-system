@@ -167,7 +167,7 @@ Objetivo: implementar a base de seguranca antes dos CRUDs.
 - [x] Criar login.
 - [x] Emitir JWT com claims de usuario e role.
 - [x] Criar refresh token.
-- [ ] Criar logout/revoke.
+- [x] Criar logout/revoke.
 - [x] Criar endpoint `/api/auth/me`.
 - [ ] Criar policies de autorizacao por role.
 - [x] Criar seed de usuario Admin inicial.
