@@ -144,7 +144,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 71 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 74 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -233,7 +233,6 @@ O foco da V4 sera o CID:
 - [x] Hasher temporario substituido por PBKDF2 com salt por senha.
 - [x] Mascaramento padrao para email, telefone e documentos.
 - [x] Criptografia de dados sensiveis em repouso.
-- [ ] Permissao sensivel separada do RBAC administrativo.
 - [x] Policy `SensitiveData.View`.
 - [x] Audit log para tentativa de visualizacao de dados sensiveis.
 - [x] Logs sem exposicao de dados sensiveis.
@@ -243,7 +242,7 @@ O foco da V4 sera o CID:
 
 ### Dados Demo e Interacoes
 
-- [ ] Geracao de clientes e assinaturas com dados sinteticos.
+- [x] Geracao de clientes e assinaturas com dados sinteticos.
 - [ ] Origem dos dados separada entre `Demo`, `Manual` e `Imported`.
 - [ ] Campanhas de notificacao para promocao, cobranca a vencer e cobranca em atraso.
 
@@ -256,7 +255,7 @@ Escopo recomendado:
 1. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
 2. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
 3. Garantir que alteracoes sensiveis dependam de consentimento do usuario.
-4. Criar gerador de dados sinteticos para clientes e assinaturas.
+4. Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
 5. Migrar repositórios em memoria para EF Core por modulo.
 
 Depois disso, entram dados sinteticos e interacoes de cobranca/promocao com seguranca desde a base.

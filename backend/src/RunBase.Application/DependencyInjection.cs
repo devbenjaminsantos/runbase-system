@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
+using RunBase.Application.Demo;
 using RunBase.Application.Health;
 using RunBase.Application.Orders;
 using RunBase.Application.Plans;
@@ -16,6 +17,7 @@ public static class DependencyInjection
         services.AddSingleton<IHealthStatusService, HealthStatusService>();
         services.AddSingleton<ISensitiveLogSanitizer, SensitiveLogSanitizer>();
         services.AddSingleton<ISensitiveDataMasker, SensitiveDataMasker>();
+        services.AddSingleton<IDemoDataGenerator, DemoDataGenerator>();
         services.AddScoped<ISensitiveDataAccessAuditor, SensitiveDataAccessAuditor>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClientsService, ClientsService>();

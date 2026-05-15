@@ -209,14 +209,13 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 - [x] Trocar hasher temporario por hash de senha adequado.
 - [x] Criar camada de mascaramento para email, telefone e documentos.
 - [x] Criar criptografia de dados sensiveis em repouso.
-- [ ] Separar permissao administrativa de permissao para visualizar dados sensiveis.
 - [x] Criar policy `SensitiveData.View`.
 - [x] Criar audit log para tentativa de visualizacao de dados sensiveis.
 - [x] Garantir que logs da aplicacao nao exponham dados sensiveis.
 - [x] Preparar persistencia com EF Core/LINQ para prevenir SQL Injection.
 - [x] Adicionar validacoes de entrada para DTOs publicos.
 - [x] Adicionar rate limiting para login e endpoints sensiveis.
-- [ ] Criar gerador de dados sinteticos para clientes e assinaturas.
+- [x] Criar gerador de dados sinteticos para clientes e assinaturas.
 - [ ] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
 - [ ] Modelar campanhas de notificacao: promocao, cobranca a vencer e cobranca em atraso.
 
