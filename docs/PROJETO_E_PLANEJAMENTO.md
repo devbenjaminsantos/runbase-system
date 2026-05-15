@@ -144,7 +144,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 43 testes aprovados.
+- [x] `dotnet test RunBase.slnx --no-build` passou com 47 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -216,29 +216,50 @@ O RBAC do RunBase foi pensado com 4 roles reais:
 - Perfil do usuario logado.
 - Configuracoes basicas da operacao.
 
-### Dados Demo, Privacidade e Interacoes
+## V4 - Security & Privacy Foundation
 
-- [ ] Geracao de clientes e assinaturas com dados sinteticos.
-- [ ] Origem dos dados separada entre `Demo`, `Manual` e `Imported`.
+A V4 sera pautada em cyberseguranca aplicada ao RunBase.
+
+Como o projeto gerencia clientes, planos, pedidos, usuarios e futuramente dados sensiveis, a prioridade passa a ser proteger informacoes mesmo dentro do painel administrativo.
+
+O foco da V4 sera o CID:
+
+- Confidencialidade: dados sensiveis mascarados por padrao, criptografia em repouso e permissao explicita para revelacao.
+- Integridade: validacoes, auditoria e protecao de alteracoes criticas.
+- Disponibilidade: protecoes contra abuso em endpoints sensiveis, como login e operacoes administrativas.
+
+### Security & Privacy
+
+- [x] Hasher temporario substituido por PBKDF2 com salt por senha.
 - [ ] Mascaramento padrao para email, telefone e documentos.
 - [ ] Criptografia de dados sensiveis em repouso.
 - [ ] Permissao sensivel separada do RBAC administrativo.
-- [ ] Audit log para revelacao de dados sensiveis.
+- [ ] Policy `SensitiveData.View`.
+- [ ] Audit log para revelacao e alteracao de dados sensiveis.
+- [ ] Logs sem exposicao de dados sensiveis.
+- [ ] Persistencia preparada contra SQL Injection com consultas parametrizadas.
+- [ ] Validacoes de entrada para DTOs publicos.
+- [ ] Rate limiting para login e endpoints sensiveis.
+
+### Dados Demo e Interacoes
+
+- [ ] Geracao de clientes e assinaturas com dados sinteticos.
+- [ ] Origem dos dados separada entre `Demo`, `Manual` e `Imported`.
 - [ ] Campanhas de notificacao para promocao, cobranca a vencer e cobranca em atraso.
 
 ## Proxima Etapa
 
-A proxima etapa natural e consolidar os modulos operacionais da V3 na nova base .NET.
+A proxima etapa natural e iniciar a V4 com a fundacao de seguranca e privacidade.
 
 Escopo recomendado:
 
-1. Trocar o hasher temporario por hash de senha adequado.
-2. Persistir usuarios e tokens em banco.
-3. Preparar CRUD inicial de usuarios com escolha explicita de role.
-4. Aplicar policies nos CRUDs conforme cada modulo nascer.
-5. Depois da fundacao backend, criar a aba de dados demo, privacidade e interacoes.
+1. Criar mascaramento de dados sensiveis.
+2. Criar permissao `SensitiveData.View`.
+3. Criar audit log para dados sensiveis.
+4. Preparar persistencia contra SQL Injection.
+5. Adicionar rate limiting para login e endpoints sensiveis.
 
-Depois disso, a aba de dados demo, privacidade e interacoes entra para deixar o produto demonstravel com seguranca.
+Depois disso, entram dados sinteticos e interacoes de cobranca/promocao com seguranca desde a base.
 
 ## Documentos Relacionados
 

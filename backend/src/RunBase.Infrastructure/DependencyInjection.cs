@@ -20,7 +20,7 @@ public static class DependencyInjection
         _ = configuration;
         services.Configure<AuthSeedOptions>(configuration.GetSection(AuthSeedOptions.SectionName));
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
-        services.AddSingleton<IPasswordHasher, PlainTextPasswordHasher>();
+        services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
         services.AddSingleton<IUserRepository, InMemoryUserRepository>();
         services.AddSingleton<IAccessTokenService, JwtAccessTokenService>();
         services.AddSingleton<IRefreshTokenService, RandomRefreshTokenService>();

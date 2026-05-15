@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\RunBase.Application\RunBase.Application.csproj" />
     <ProjectReference Include="..\..\src\RunBase.Domain\RunBase.Domain.csproj" />
+    <ProjectReference Include="..\..\src\RunBase.Infrastructure\RunBase.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

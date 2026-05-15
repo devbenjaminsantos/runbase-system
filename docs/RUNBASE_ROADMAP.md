@@ -202,24 +202,31 @@ Criterio de pronto:
 - Viewer nao consegue alterar dados.
 - Testes cobrem regras principais.
 
-### Milestone 4 - Dados Demo, Privacidade e Interacoes
+### Milestone 4 - Security & Privacy Foundation
 
-Objetivo: deixar a base backend pronta para demonstrar operacao realista sem expor dados sensiveis.
+Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e reforcando confidencialidade, integridade e disponibilidade.
 
-- [ ] Criar gerador de dados sinteticos para clientes e assinaturas.
-- [ ] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
+- [x] Trocar hasher temporario por hash de senha adequado.
 - [ ] Criar camada de mascaramento para email, telefone e documentos.
 - [ ] Criar criptografia de dados sensiveis em repouso.
-- [ ] Separar permissao de gestao de permissao para visualizar dados sensiveis.
-- [ ] Criar audit log para revelacao de dados sensiveis.
+- [ ] Separar permissao administrativa de permissao para visualizar dados sensiveis.
+- [ ] Criar policy `SensitiveData.View`.
+- [ ] Criar audit log para revelacao e alteracao de dados sensiveis.
+- [ ] Garantir que logs da aplicacao nao exponham dados sensiveis.
+- [ ] Preparar persistencia com consultas parametrizadas para prevenir SQL Injection.
+- [ ] Adicionar validacoes de entrada para DTOs publicos.
+- [ ] Adicionar rate limiting para login e endpoints sensiveis.
+- [ ] Criar gerador de dados sinteticos para clientes e assinaturas.
+- [ ] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
 - [ ] Modelar campanhas de notificacao: promocao, cobranca a vencer e cobranca em atraso.
 
 Criterio de pronto:
 
+- Confidencialidade: Admin comum nao ve dados sensiveis completos por padrao.
+- Integridade: alteracoes criticas ficam validadas e auditadas.
+- Disponibilidade: endpoints sensiveis possuem protecoes basicas contra abuso.
+- SQL Injection: persistencia futura segue uso de parametros, sem concatenacao de SQL.
 - Ambiente demo tem clientes e assinaturas realistas sem dados reais.
-- Admin comum nao ve dados sensiveis completos por padrao.
-- Visualizacao sensivel exige permissao explicita.
-- Acoes sensiveis ficam rastreadas para auditoria.
 
 ### Milestone 5 - Frontend Foundation
 
