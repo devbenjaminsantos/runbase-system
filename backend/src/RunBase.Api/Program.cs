@@ -2,7 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using RunBase.Application;
 using RunBase.Application.Auth;
@@ -17,6 +19,8 @@ using RunBase.Infrastructure.Auth;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+const string LoginRateLimitPolicy = "login";
+const string SensitiveDataRateLimitPolicy = "sensitive-data";
 
 builder.Services.AddOpenApi();
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -64,6 +68,41 @@ builder.Services.AddAuthorization(options =>
             .RequireClaim(AuthPolicies.PermissionClaimType, AuthPolicies.ViewSensitiveData));
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        await Results.Json(
+            new
+            {
+                message = "Too many requests. Please wait before trying again."
+            },
+            statusCode: StatusCodes.Status429TooManyRequests)
+            .ExecuteAsync(context.HttpContext);
+    };
+
+    options.AddPolicy(LoginRateLimitPolicy, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            GetClientPartitionKey(httpContext),
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
+    options.AddPolicy(SensitiveDataRateLimitPolicy, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            GetUserOrClientPartitionKey(httpContext),
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 2,
+                Window = TimeSpan.FromMinutes(10),
+                QueueLimit = 0
+            }));
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -79,6 +118,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapGet("/health", (IHealthStatusService healthStatusService) =>
 {
@@ -121,6 +161,7 @@ auth.MapPost("/login", async (
     };
 })
 .AddEndpointFilter<ValidationFilter<LoginRequest>>()
+.RequireRateLimiting(LoginRateLimitPolicy)
 .WithName("Login")
 .WithSummary("Authenticates a user and returns an access token.");
 
@@ -329,6 +370,7 @@ app.MapGet("/api/clients/{id:guid}/sensitive", async (
         statusCode: StatusCodes.Status403Forbidden);
 })
 .RequireAuthorization()
+.RequireRateLimiting(SensitiveDataRateLimitPolicy)
 .WithTags("Clients")
 .WithName("GetClientSensitiveData")
 .WithSummary("Audits and denies attempts to view sensitive client data.");
@@ -591,6 +633,17 @@ orders.MapDelete("/{id:guid}", async (
 .WithSummary("Deletes an order.");
 
 app.Run();
+
+static string GetClientPartitionKey(HttpContext httpContext)
+{
+    return httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown-client";
+}
+
+static string GetUserOrClientPartitionKey(HttpContext httpContext)
+{
+    return httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+        GetClientPartitionKey(httpContext);
+}
 
 internal sealed class ValidationFilter<TRequest> : IEndpointFilter
 {

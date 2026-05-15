@@ -215,7 +215,7 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 - [ ] Garantir que logs da aplicacao nao exponham dados sensiveis.
 - [ ] Preparar persistencia com consultas parametrizadas para prevenir SQL Injection.
 - [x] Adicionar validacoes de entrada para DTOs publicos.
-- [ ] Adicionar rate limiting para login e endpoints sensiveis.
+- [x] Adicionar rate limiting para login e endpoints sensiveis.
 - [ ] Criar gerador de dados sinteticos para clientes e assinaturas.
 - [ ] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
 - [ ] Modelar campanhas de notificacao: promocao, cobranca a vencer e cobranca em atraso.

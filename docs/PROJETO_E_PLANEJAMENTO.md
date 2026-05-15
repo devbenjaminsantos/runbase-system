@@ -239,7 +239,7 @@ O foco da V4 sera o CID:
 - [ ] Logs sem exposicao de dados sensiveis.
 - [ ] Persistencia preparada contra SQL Injection com consultas parametrizadas.
 - [x] Validacoes de entrada para DTOs publicos.
-- [ ] Rate limiting para login e endpoints sensiveis.
+- [x] Rate limiting para login e endpoints sensiveis.
 
 ### Dados Demo e Interacoes
 
@@ -254,10 +254,10 @@ A proxima etapa natural e iniciar a V4 com a fundacao de seguranca e privacidade
 Escopo recomendado:
 
 1. Preparar persistencia contra SQL Injection.
-2. Adicionar rate limiting para login e endpoints sensiveis.
-3. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
-4. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
-5. Garantir que alteracoes sensiveis dependam de consentimento do usuario.
+2. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
+3. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
+4. Garantir que alteracoes sensiveis dependam de consentimento do usuario.
+5. Garantir que logs da aplicacao nao exponham dados sensiveis.
 
 Depois disso, entram dados sinteticos e interacoes de cobranca/promocao com seguranca desde a base.
 
