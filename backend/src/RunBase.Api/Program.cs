@@ -7,6 +7,7 @@ using RunBase.Application;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
 using RunBase.Application.Health;
+using RunBase.Application.Orders;
 using RunBase.Application.Plans;
 using RunBase.Application.Users;
 using RunBase.Infrastructure;
@@ -431,5 +432,106 @@ plans.MapDelete("/{id:guid}", async (
 })
 .WithName("DeletePlan")
 .WithSummary("Deletes a plan.");
+
+var orders = app.MapGroup("/api/orders")
+    .RequireAuthorization(AuthPolicies.ManageOrders)
+    .WithTags("Orders");
+
+orders.MapGet("/", async (
+    IOrdersService ordersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await ordersService.ListAsync(cancellationToken);
+
+    return Results.Ok(result);
+})
+.WithName("ListOrders")
+.WithSummary("Lists orders.");
+
+orders.MapGet("/{id:guid}", async (
+    Guid id,
+    IOrdersService ordersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await ordersService.GetByIdAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.Ok(result.Value)
+        : Results.NotFound();
+})
+.WithName("GetOrder")
+.WithSummary("Gets an order by id.");
+
+orders.MapPost("/", async (
+    CreateOrderRequest request,
+    IOrdersService ordersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await ordersService.CreateAsync(request, cancellationToken);
+
+    return result.Error switch
+    {
+        OrderError.None => Results.Created($"/api/orders/{result.Value!.Id}", result.Value),
+        OrderError.ClientNotFound => Results.NotFound(),
+        OrderError.InvalidAmount => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("CreateOrder")
+.WithSummary("Creates an order with a preserved final amount.");
+
+orders.MapPut("/{id:guid}", async (
+    Guid id,
+    UpdateOrderRequest request,
+    IOrdersService ordersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await ordersService.UpdateAsync(id, request, cancellationToken);
+
+    return result.Error switch
+    {
+        OrderError.None => Results.Ok(result.Value),
+        OrderError.NotFound => Results.NotFound(),
+        OrderError.ClientNotFound => Results.NotFound(),
+        OrderError.InvalidAmount => Results.BadRequest(),
+        OrderError.InvalidStatusTransition => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("UpdateOrder")
+.WithSummary("Updates an order.");
+
+orders.MapPatch("/{id:guid}/status", async (
+    Guid id,
+    UpdateOrderStatusRequest request,
+    IOrdersService ordersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await ordersService.UpdateStatusAsync(id, request, cancellationToken);
+
+    return result.Error switch
+    {
+        OrderError.None => Results.Ok(result.Value),
+        OrderError.NotFound => Results.NotFound(),
+        OrderError.InvalidStatusTransition => Results.BadRequest(),
+        _ => Results.BadRequest()
+    };
+})
+.WithName("UpdateOrderStatus")
+.WithSummary("Updates an order status.");
+
+orders.MapDelete("/{id:guid}", async (
+    Guid id,
+    IOrdersService ordersService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await ordersService.DeleteAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.NoContent()
+        : Results.NotFound();
+})
+.WithName("DeleteOrder")
+.WithSummary("Deletes an order.");
 
 app.Run();

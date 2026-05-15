@@ -188,10 +188,10 @@ Objetivo: implementar os CRUDs centrais do produto.
 - [x] Clients CRUD.
 - [x] Plans CRUD.
 - [x] Definir estagios iniciais de plano: `Trial`, `Free`, `Plus`, `Premium`.
-- [ ] Orders CRUD.
+- [x] Orders CRUD.
 - [x] Toggle de plano ativo/inativo.
-- [ ] Atualizacao de status de pedido.
-- [ ] Validacoes de regras de dominio.
+- [x] Atualizacao de status de pedido.
+- [x] Validacoes de regras de dominio.
 - [x] Testes unitarios iniciais nos Services.
 
 Criterio de pronto:
