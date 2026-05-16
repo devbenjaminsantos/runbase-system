@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using RunBase.Application.Auth;
 using RunBase.Application.Security;
 using RunBase.Infrastructure.Clients;
 using RunBase.Domain.Notifications;
@@ -17,6 +18,8 @@ public sealed class RunBaseDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
     public DbSet<ClientRecord> Clients => Set<ClientRecord>();
 
     public DbSet<Plan> Plans => Set<Plan>();
@@ -30,6 +33,7 @@ public sealed class RunBaseDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureUsers(modelBuilder);
+        ConfigureRefreshTokens(modelBuilder);
         ConfigureClients(modelBuilder);
         ConfigurePlans(modelBuilder);
         ConfigureOrders(modelBuilder);
@@ -51,6 +55,21 @@ public sealed class RunBaseDbContext : DbContext
             entity.Property(user => user.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
             entity.Property(user => user.CreatedAt).IsRequired();
             entity.Property(user => user.UpdatedAt).IsRequired();
+        });
+    }
+
+    private static void ConfigureRefreshTokens(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("refresh_tokens");
+            entity.HasKey(refreshToken => refreshToken.Value);
+            entity.Property(refreshToken => refreshToken.Value).HasMaxLength(256).IsRequired();
+            entity.Property(refreshToken => refreshToken.UserId).IsRequired();
+            entity.HasIndex(refreshToken => refreshToken.UserId);
+            entity.Property(refreshToken => refreshToken.ExpiresAtUtc).IsRequired();
+            entity.Property(refreshToken => refreshToken.CreatedAtUtc).IsRequired();
+            entity.Property(refreshToken => refreshToken.RevokedAtUtc);
         });
     }
 

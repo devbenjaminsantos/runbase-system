@@ -37,6 +37,7 @@ public static class DependencyInjection
             services.AddScoped<IPlanRepository, EfPlanRepository>();
             services.AddScoped<ISensitiveDataAuditRepository, EfSensitiveDataAuditRepository>();
             services.AddScoped<IUserRepository, EfUserRepository>();
+            services.AddScoped<IRefreshTokenRepository, EfRefreshTokenRepository>();
         }
         else
         {
@@ -46,6 +47,7 @@ public static class DependencyInjection
             services.AddSingleton<IPlanRepository, InMemoryPlanRepository>();
             services.AddSingleton<ISensitiveDataAuditRepository, InMemorySensitiveDataAuditRepository>();
             services.AddSingleton<IUserRepository, InMemoryUserRepository>();
+            services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
         }
 
         services.Configure<AuthSeedOptions>(configuration.GetSection(AuthSeedOptions.SectionName));
@@ -56,7 +58,6 @@ public static class DependencyInjection
         services.AddSingleton<ISensitiveDataProtector, AesGcmSensitiveDataProtector>();
         services.AddSingleton<IAccessTokenService, JwtAccessTokenService>();
         services.AddSingleton<IRefreshTokenService, RandomRefreshTokenService>();
-        services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
 
         return services;
     }
