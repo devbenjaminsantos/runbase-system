@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RunBase.Application.Security;
-using RunBase.Domain.Clients;
+using RunBase.Infrastructure.Clients;
 using RunBase.Domain.Notifications;
 using RunBase.Domain.Orders;
 using RunBase.Domain.Plans;
@@ -17,7 +17,7 @@ public sealed class RunBaseDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
 
-    public DbSet<Client> Clients => Set<Client>();
+    public DbSet<ClientRecord> Clients => Set<ClientRecord>();
 
     public DbSet<Plan> Plans => Set<Plan>();
 
@@ -56,13 +56,14 @@ public sealed class RunBaseDbContext : DbContext
 
     private static void ConfigureClients(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Client>(entity =>
+        modelBuilder.Entity<ClientRecord>(entity =>
         {
             entity.ToTable("clients");
             entity.HasKey(client => client.Id);
             entity.Property(client => client.Name).HasMaxLength(160).IsRequired();
-            entity.Property(client => client.Email).HasMaxLength(254).IsRequired();
-            entity.HasIndex(client => client.Email).IsUnique();
+            entity.Property(client => client.EmailCipherText).HasMaxLength(1024).IsRequired();
+            entity.Property(client => client.EmailLookupHash).HasMaxLength(128).IsRequired();
+            entity.HasIndex(client => client.EmailLookupHash).IsUnique();
             entity.Property(client => client.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
             entity.Property(client => client.PlanStage).HasConversion<string>().HasMaxLength(32).IsRequired();
             entity.Property(client => client.DataSource).HasConversion<string>().HasMaxLength(32).IsRequired();

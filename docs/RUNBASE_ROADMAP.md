@@ -221,7 +221,7 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 - [x] Migrar repositorio de Plans para EF Core com fallback em memoria.
 - [x] Migrar repositorio de Orders para EF Core com fallback em memoria.
 - [x] Migrar repositorio de Notification Campaigns para EF Core com fallback em memoria.
-- [ ] Migrar repositorio de Clients para EF Core preservando criptografia e mascaramento.
+- [x] Migrar repositorio de Clients para EF Core preservando criptografia, lookup hash e fallback em memoria.
 - [x] Migrar audit log sensivel para EF Core com fallback em memoria.
 
 Criterio de pronto:
