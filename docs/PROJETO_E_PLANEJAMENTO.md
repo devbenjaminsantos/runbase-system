@@ -254,6 +254,13 @@ O foco da V4 sera o CID:
 - [x] Clients migrado para EF Core preservando criptografia, lookup hash e fallback em memoria.
 - [x] Audit log sensivel migrado para EF Core com fallback em memoria.
 
+### 6/6 - Auth, Users & Refresh Tokens
+
+- [x] 6.1 - Migrar `Users` para EF Core com fallback em memoria.
+- [ ] 6.2 - Validar login, `/me`, RBAC e usuarios inativos com usuario persistido.
+- [ ] 6.3 - Migrar `Refresh Tokens` para EF Core com rotacao, revoke e logout.
+- [ ] 6.4 - Validacao final do fluxo completo: login, refresh, logout, roles, usuario inativo e ultimo admin ativo.
+
 ## Proxima Etapa
 
 A proxima etapa natural e iniciar a V4 com a fundacao de seguranca e privacidade.
