@@ -259,7 +259,7 @@ O foco da V4 sera o CID:
 - [x] 6.1 - Migrar `Users` para EF Core com fallback em memoria.
 - [x] 6.2 - Validar login, `/me`, RBAC e usuarios inativos com usuario persistido.
 - [x] 6.3 - Migrar `Refresh Tokens` para EF Core com rotacao, revoke, logout e fallback em memoria.
-- [ ] 6.4 - Validacao final do fluxo completo: login, refresh, logout, roles, usuario inativo e ultimo admin ativo.
+- [x] 6.4 - Validacao final do fluxo completo: login, refresh, logout, roles, usuario inativo e ultimo admin ativo.
 
 ## Proxima Etapa
 
