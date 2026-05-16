@@ -1,5 +1,6 @@
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
+using RunBase.Domain;
 
 namespace RunBase.Application.Demo;
 
@@ -49,6 +50,7 @@ public sealed class DemoDataGenerator : IDemoDataGenerator
             $"client{index:000}@demo.runbase.local",
             status,
             planStage,
+            DataSource.Demo,
             nextBillingAt);
     }
 

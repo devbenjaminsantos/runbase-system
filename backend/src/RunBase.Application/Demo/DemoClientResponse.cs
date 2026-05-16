@@ -1,3 +1,4 @@
+using RunBase.Domain;
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
 
@@ -8,4 +9,5 @@ public sealed record DemoClientResponse(
     string Email,
     ClientStatus Status,
     PlanStage PlanStage,
+    DataSource DataSource,
     DateTimeOffset? NextBillingAt);

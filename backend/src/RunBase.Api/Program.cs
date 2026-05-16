@@ -10,6 +10,7 @@ using RunBase.Application;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
 using RunBase.Application.Health;
+using RunBase.Application.Notifications;
 using RunBase.Application.Orders;
 using RunBase.Application.Plans;
 using RunBase.Application.Security;
@@ -650,6 +651,67 @@ orders.MapDelete("/{id:guid}", async (
 })
 .WithName("DeleteOrder")
 .WithSummary("Deletes an order.");
+
+var notificationCampaigns = app.MapGroup("/api/notification-campaigns")
+    .RequireAuthorization(AuthPolicies.ManageClients)
+    .WithTags("Notification Campaigns");
+
+notificationCampaigns.MapGet("/", async (
+    INotificationCampaignsService notificationCampaignsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await notificationCampaignsService.ListAsync(cancellationToken);
+
+    return Results.Ok(result);
+})
+.WithName("ListNotificationCampaigns")
+.WithSummary("Lists notification campaigns with estimated audiences.");
+
+notificationCampaigns.MapGet("/{id:guid}", async (
+    Guid id,
+    INotificationCampaignsService notificationCampaignsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await notificationCampaignsService.GetByIdAsync(id, cancellationToken);
+
+    return result.Succeeded
+        ? Results.Ok(result.Value)
+        : Results.NotFound();
+})
+.WithName("GetNotificationCampaign")
+.WithSummary("Gets a notification campaign by id.");
+
+notificationCampaigns.MapPost("/preview", async (
+    NotificationCampaignPreviewRequest request,
+    INotificationCampaignsService notificationCampaignsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await notificationCampaignsService.PreviewAsync(request, cancellationToken);
+
+    return Results.Ok(result);
+})
+.AddEndpointFilter<ValidationFilter<NotificationCampaignPreviewRequest>>()
+.WithName("PreviewNotificationCampaign")
+.WithSummary("Previews a notification campaign audience without sending messages.");
+
+notificationCampaigns.MapPost("/", async (
+    CreateNotificationCampaignRequest request,
+    INotificationCampaignsService notificationCampaignsService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await notificationCampaignsService.CreateAsync(request, cancellationToken);
+
+    return result.Error switch
+    {
+        NotificationCampaignError.None => Results.Created(
+            $"/api/notification-campaigns/{result.Value!.Id}",
+            result.Value),
+        _ => Results.BadRequest()
+    };
+})
+.AddEndpointFilter<ValidationFilter<CreateNotificationCampaignRequest>>()
+.WithName("CreateNotificationCampaign")
+.WithSummary("Creates a notification campaign draft or scheduled campaign.");
 
 app.Run();
 

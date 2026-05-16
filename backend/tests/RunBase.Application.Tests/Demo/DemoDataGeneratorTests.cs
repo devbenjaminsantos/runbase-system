@@ -1,4 +1,5 @@
 using RunBase.Application.Demo;
+using RunBase.Domain;
 using RunBase.Domain.Plans;
 
 namespace RunBase.Application.Tests.Demo;
@@ -43,5 +44,15 @@ public sealed class DemoDataGeneratorTests
                 Assert.Null(client.NextBillingAt);
             }
         });
+    }
+
+    [Fact]
+    public void GenerateClients_MarksAllClientsAsDemoSource()
+    {
+        var generator = new DemoDataGenerator();
+
+        var clients = generator.GenerateClients(5, DateTimeOffset.Parse("2026-05-15T00:00:00Z"));
+
+        Assert.All(clients, client => Assert.Equal(DataSource.Demo, client.DataSource));
     }
 }

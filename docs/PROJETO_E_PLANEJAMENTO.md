@@ -144,7 +144,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 ### Validacoes feitas
 
 - [x] `dotnet build RunBase.slnx` passou com 0 erros.
-- [x] `dotnet test RunBase.slnx --no-build` passou com 74 testes aprovados.
+- [x] `dotnet test RunBase.slnx` passou com 80 testes aprovados.
 - [x] `GET /health` retornou `Healthy`.
 - [x] `/scalar/v1` retornou 200.
 - [x] `/openapi/v1.json` retornou 200.
@@ -243,8 +243,8 @@ O foco da V4 sera o CID:
 ### Dados Demo e Interacoes
 
 - [x] Geracao de clientes e assinaturas com dados sinteticos.
-- [ ] Origem dos dados separada entre `Demo`, `Manual` e `Imported`.
-- [ ] Campanhas de notificacao para promocao, cobranca a vencer e cobranca em atraso.
+- [x] Origem dos dados separada entre `Demo`, `Manual` e `Imported`.
+- [x] Campanhas de notificacao para promocao, cobranca a vencer e cobranca em atraso.
 
 ## Proxima Etapa
 
@@ -254,9 +254,7 @@ Escopo recomendado:
 
 1. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
 2. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
-3. Garantir que alteracoes sensiveis dependam de consentimento do usuario.
-4. Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
-5. Migrar repositórios em memoria para EF Core por modulo.
+3. Migrar repositórios em memoria para EF Core por modulo.
 
 Depois disso, entram dados sinteticos e interacoes de cobranca/promocao com seguranca desde a base.
 

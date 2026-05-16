@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RunBase.Application.Security;
 using RunBase.Domain.Clients;
+using RunBase.Domain.Notifications;
 using RunBase.Domain.Orders;
 using RunBase.Domain.Plans;
 using RunBase.Domain.Users;
@@ -22,6 +23,8 @@ public sealed class RunBaseDbContext : DbContext
 
     public DbSet<Order> Orders => Set<Order>();
 
+    public DbSet<NotificationCampaign> NotificationCampaigns => Set<NotificationCampaign>();
+
     public DbSet<SensitiveDataAuditEntry> SensitiveDataAuditEntries => Set<SensitiveDataAuditEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,6 +33,7 @@ public sealed class RunBaseDbContext : DbContext
         ConfigureClients(modelBuilder);
         ConfigurePlans(modelBuilder);
         ConfigureOrders(modelBuilder);
+        ConfigureNotificationCampaigns(modelBuilder);
         ConfigureSensitiveDataAuditEntries(modelBuilder);
     }
 
@@ -61,6 +65,7 @@ public sealed class RunBaseDbContext : DbContext
             entity.HasIndex(client => client.Email).IsUnique();
             entity.Property(client => client.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
             entity.Property(client => client.PlanStage).HasConversion<string>().HasMaxLength(32).IsRequired();
+            entity.Property(client => client.DataSource).HasConversion<string>().HasMaxLength(32).IsRequired();
             entity.Property(client => client.NextBillingAt);
             entity.Property(client => client.CreatedAt).IsRequired();
             entity.Property(client => client.UpdatedAt).IsRequired();
@@ -98,6 +103,22 @@ public sealed class RunBaseDbContext : DbContext
             entity.Property(order => order.FinalAmount).HasPrecision(18, 2).IsRequired();
             entity.Property(order => order.CreatedAt).IsRequired();
             entity.Property(order => order.UpdatedAt).IsRequired();
+        });
+    }
+
+    private static void ConfigureNotificationCampaigns(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<NotificationCampaign>(entity =>
+        {
+            entity.ToTable("notification_campaigns");
+            entity.HasKey(campaign => campaign.Id);
+            entity.Property(campaign => campaign.Name).HasMaxLength(120).IsRequired();
+            entity.Property(campaign => campaign.Type).HasConversion<string>().HasMaxLength(32).IsRequired();
+            entity.Property(campaign => campaign.Status).HasConversion<string>().HasMaxLength(32).IsRequired();
+            entity.Property(campaign => campaign.TargetPlanStage).HasConversion<string>().HasMaxLength(32);
+            entity.Property(campaign => campaign.ScheduledAt);
+            entity.Property(campaign => campaign.CreatedAt).IsRequired();
+            entity.Property(campaign => campaign.UpdatedAt).IsRequired();
         });
     }
 

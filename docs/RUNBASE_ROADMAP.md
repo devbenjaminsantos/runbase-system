@@ -216,8 +216,8 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 - [x] Adicionar validacoes de entrada para DTOs publicos.
 - [x] Adicionar rate limiting para login e endpoints sensiveis.
 - [x] Criar gerador de dados sinteticos para clientes e assinaturas.
-- [ ] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
-- [ ] Modelar campanhas de notificacao: promocao, cobranca a vencer e cobranca em atraso.
+- [x] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
+- [x] Modelar campanhas de notificacao: promocao, cobranca a vencer e cobranca em atraso.
 
 Criterio de pronto:
 

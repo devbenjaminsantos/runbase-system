@@ -1,5 +1,6 @@
 using RunBase.Application.Clients;
 using RunBase.Application.Security;
+using RunBase.Domain;
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
 
@@ -72,11 +73,13 @@ public sealed class ClientsServiceTests
             "premium@demo.runbase.local",
             ClientStatus.Suspended,
             PlanStage.Premium,
+            DataSource.Imported,
             nextBillingAt));
 
         Assert.True(result.Succeeded);
         Assert.Equal(ClientStatus.Suspended, result.Value!.Status);
         Assert.Equal(PlanStage.Premium, result.Value.PlanStage);
+        Assert.Equal(DataSource.Imported, result.Value.DataSource);
         Assert.Equal(nextBillingAt, result.Value.NextBillingAt);
     }
 
@@ -111,6 +114,7 @@ public sealed class ClientsServiceTests
             email,
             ClientStatus.Active,
             PlanStage.Free,
+            DataSource.Manual,
             null,
             now,
             now);

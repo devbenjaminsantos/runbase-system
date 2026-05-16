@@ -1,6 +1,7 @@
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
 using RunBase.Application.Security;
+using RunBase.Domain;
 
 namespace RunBase.Application.Clients;
 
@@ -60,6 +61,7 @@ public sealed class ClientsService : IClientsService
             request.Email,
             request.Status,
             request.PlanStage,
+            request.DataSource ?? DataSource.Manual,
             request.NextBillingAt,
             now,
             now);
@@ -96,6 +98,7 @@ public sealed class ClientsService : IClientsService
             request.Email,
             request.Status,
             request.PlanStage,
+            request.DataSource,
             request.NextBillingAt,
             DateTimeOffset.UtcNow);
 
@@ -128,6 +131,7 @@ public sealed class ClientsService : IClientsService
             _sensitiveDataMasker.MaskEmail(client.Email),
             client.Status,
             client.PlanStage,
+            client.DataSource,
             client.NextBillingAt,
             client.CreatedAt,
             client.UpdatedAt);

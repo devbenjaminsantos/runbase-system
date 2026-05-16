@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using RunBase.Application.Clients;
 using RunBase.Application.Security;
+using RunBase.Domain;
 using RunBase.Domain.Clients;
 
 namespace RunBase.Infrastructure.Clients;
@@ -62,6 +63,7 @@ public sealed class InMemoryClientRepository : IClientRepository
             protectedEmail.LookupHash,
             client.Status,
             client.PlanStage,
+            client.DataSource,
             client.NextBillingAt,
             client.CreatedAt,
             client.UpdatedAt);
@@ -86,6 +88,7 @@ public sealed class InMemoryClientRepository : IClientRepository
             _sensitiveDataProtector.Unprotect(storedClient.EmailCipherText),
             storedClient.Status,
             storedClient.PlanStage,
+            storedClient.DataSource,
             storedClient.NextBillingAt,
             storedClient.CreatedAt,
             storedClient.UpdatedAt);
@@ -98,6 +101,7 @@ public sealed class InMemoryClientRepository : IClientRepository
         string EmailLookupHash,
         ClientStatus Status,
         Domain.Plans.PlanStage PlanStage,
+        DataSource DataSource,
         DateTimeOffset? NextBillingAt,
         DateTimeOffset CreatedAt,
         DateTimeOffset UpdatedAt);

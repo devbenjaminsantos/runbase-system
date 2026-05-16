@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using RunBase.Application.Clients;
+using RunBase.Application.Notifications;
 using RunBase.Application.Orders;
 using RunBase.Application.Plans;
 using RunBase.Application.Users;
+using RunBase.Domain;
 using RunBase.Domain.Clients;
+using RunBase.Domain.Notifications;
 using RunBase.Domain.Orders;
 using RunBase.Domain.Plans;
 using RunBase.Domain.Users;
@@ -60,6 +63,16 @@ public sealed class PublicRequestValidationTests
             PlanStage.Plus,
             OrderStatus.Pending,
             -1);
+
+        Assert.False(IsValid(request));
+    }
+
+    [Fact]
+    public void CreateNotificationCampaignRequest_WithEmptyName_IsInvalid()
+    {
+        var request = new CreateNotificationCampaignRequest(
+            string.Empty,
+            NotificationCampaignType.Promotion);
 
         Assert.False(IsValid(request));
     }

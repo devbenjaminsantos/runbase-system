@@ -10,6 +10,7 @@ public sealed class Client
         string email,
         ClientStatus status,
         PlanStage planStage,
+        DataSource dataSource,
         DateTimeOffset? nextBillingAt,
         DateTimeOffset createdAt,
         DateTimeOffset updatedAt)
@@ -21,6 +22,7 @@ public sealed class Client
         Email = email;
         Status = status;
         PlanStage = planStage;
+        DataSource = dataSource;
         NextBillingAt = nextBillingAt;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
@@ -36,6 +38,8 @@ public sealed class Client
 
     public PlanStage PlanStage { get; private set; }
 
+    public DataSource DataSource { get; private set; }
+
     public DateTimeOffset? NextBillingAt { get; private set; }
 
     public DateTimeOffset CreatedAt { get; }
@@ -47,6 +51,7 @@ public sealed class Client
         string email,
         ClientStatus status,
         PlanStage planStage,
+        DataSource dataSource,
         DateTimeOffset? nextBillingAt,
         DateTimeOffset updatedAt)
     {
@@ -56,6 +61,7 @@ public sealed class Client
         Email = email;
         Status = status;
         PlanStage = planStage;
+        DataSource = dataSource;
         NextBillingAt = nextBillingAt;
         UpdatedAt = updatedAt;
     }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using RunBase.Domain;
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
 
@@ -14,4 +15,5 @@ public sealed record CreateClientRequest(
     string Email,
     ClientStatus Status,
     PlanStage PlanStage,
-    DateTimeOffset? NextBillingAt);
+    DateTimeOffset? NextBillingAt,
+    DataSource? DataSource = null);

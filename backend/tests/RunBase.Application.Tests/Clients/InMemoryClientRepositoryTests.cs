@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using RunBase.Domain;
 using RunBase.Domain.Clients;
 using RunBase.Domain.Plans;
 using RunBase.Infrastructure.Clients;
@@ -55,6 +56,7 @@ public sealed class InMemoryClientRepositoryTests
             email,
             ClientStatus.Active,
             PlanStage.Free,
+            DataSource.Manual,
             null,
             now,
             now);

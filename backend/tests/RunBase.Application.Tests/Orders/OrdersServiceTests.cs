@@ -1,5 +1,6 @@
 using RunBase.Application.Clients;
 using RunBase.Application.Orders;
+using RunBase.Domain;
 using RunBase.Domain.Clients;
 using RunBase.Domain.Orders;
 using RunBase.Domain.Plans;
@@ -121,6 +122,7 @@ public sealed class OrdersServiceTests
             "client@demo.runbase.local",
             ClientStatus.Active,
             PlanStage.Free,
+            DataSource.Manual,
             null,
             now,
             now);

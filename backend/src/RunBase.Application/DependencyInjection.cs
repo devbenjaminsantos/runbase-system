@@ -3,6 +3,7 @@ using RunBase.Application.Auth;
 using RunBase.Application.Clients;
 using RunBase.Application.Demo;
 using RunBase.Application.Health;
+using RunBase.Application.Notifications;
 using RunBase.Application.Orders;
 using RunBase.Application.Plans;
 using RunBase.Application.Security;
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<ISensitiveDataAccessAuditor, SensitiveDataAccessAuditor>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClientsService, ClientsService>();
+        services.AddScoped<INotificationCampaignsService, NotificationCampaignsService>();
         services.AddScoped<IOrdersService, OrdersService>();
         services.AddScoped<IPlansService, PlansService>();
         services.AddScoped<IUsersService, UsersService>();
