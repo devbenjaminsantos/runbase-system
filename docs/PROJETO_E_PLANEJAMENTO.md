@@ -250,7 +250,7 @@ O foco da V4 sera o CID:
 
 - [x] Plans migrado para EF Core com fallback em memoria.
 - [x] Orders migrado para EF Core com fallback em memoria.
-- [ ] Notification Campaigns migrado para EF Core.
+- [x] Notification Campaigns migrado para EF Core com fallback em memoria.
 - [ ] Clients migrado para EF Core preservando criptografia e mascaramento.
 - [ ] Audit log sensivel migrado para EF Core.
 
