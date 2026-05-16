@@ -246,6 +246,14 @@ O foco da V4 sera o CID:
 - [x] Origem dos dados separada entre `Demo`, `Manual` e `Imported`.
 - [x] Campanhas de notificacao para promocao, cobranca a vencer e cobranca em atraso.
 
+### Migracao EF Core por Modulo
+
+- [x] Plans migrado para EF Core com fallback em memoria.
+- [ ] Orders migrado para EF Core.
+- [ ] Notification Campaigns migrado para EF Core.
+- [ ] Clients migrado para EF Core preservando criptografia e mascaramento.
+- [ ] Audit log sensivel migrado para EF Core.
+
 ## Proxima Etapa
 
 A proxima etapa natural e iniciar a V4 com a fundacao de seguranca e privacidade.
@@ -254,7 +262,7 @@ Escopo recomendado:
 
 1. Aplicar mascaramento sensivel nos demais contratos conforme novos dados entrarem.
 2. Criar fluxo de bloqueio persistente para reincidencia de tentativa sensivel.
-3. Migrar repositórios em memoria para EF Core por modulo.
+3. Continuar migracao EF Core por modulo.
 
 Depois disso, entram dados sinteticos e interacoes de cobranca/promocao com seguranca desde a base.
 

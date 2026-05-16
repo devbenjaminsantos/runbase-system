@@ -30,6 +30,12 @@ public static class DependencyInjection
         {
             services.AddDbContext<RunBaseDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            services.AddScoped<IPlanRepository, EfPlanRepository>();
+        }
+        else
+        {
+            services.AddSingleton<IPlanRepository, InMemoryPlanRepository>();
         }
 
         services.Configure<AuthSeedOptions>(configuration.GetSection(AuthSeedOptions.SectionName));
@@ -45,7 +51,6 @@ public static class DependencyInjection
         services.AddSingleton<IClientRepository, InMemoryClientRepository>();
         services.AddSingleton<INotificationCampaignRepository, InMemoryNotificationCampaignRepository>();
         services.AddSingleton<IOrderRepository, InMemoryOrderRepository>();
-        services.AddSingleton<IPlanRepository, InMemoryPlanRepository>();
         services.AddSingleton<ISensitiveDataAuditRepository, InMemorySensitiveDataAuditRepository>();
 
         return services;

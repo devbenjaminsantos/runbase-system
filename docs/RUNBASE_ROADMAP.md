@@ -218,6 +218,11 @@ Objetivo: pautar a V4 em cyberseguranca aplicada, protegendo dados sensiveis e r
 - [x] Criar gerador de dados sinteticos para clientes e assinaturas.
 - [x] Marcar origem dos dados como `Demo`, `Manual` ou `Imported`.
 - [x] Modelar campanhas de notificacao: promocao, cobranca a vencer e cobranca em atraso.
+- [x] Migrar repositorio de Plans para EF Core com fallback em memoria.
+- [ ] Migrar repositorio de Orders para EF Core.
+- [ ] Migrar repositorio de Notification Campaigns para EF Core.
+- [ ] Migrar repositorio de Clients para EF Core preservando criptografia e mascaramento.
+- [ ] Migrar audit log sensivel para EF Core.
 
 Criterio de pronto:
 
