@@ -31,10 +31,12 @@ public static class DependencyInjection
             services.AddDbContext<RunBaseDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+            services.AddScoped<IOrderRepository, EfOrderRepository>();
             services.AddScoped<IPlanRepository, EfPlanRepository>();
         }
         else
         {
+            services.AddSingleton<IOrderRepository, InMemoryOrderRepository>();
             services.AddSingleton<IPlanRepository, InMemoryPlanRepository>();
         }
 
@@ -50,7 +52,6 @@ public static class DependencyInjection
         services.AddSingleton<IRefreshTokenRepository, InMemoryRefreshTokenRepository>();
         services.AddSingleton<IClientRepository, InMemoryClientRepository>();
         services.AddSingleton<INotificationCampaignRepository, InMemoryNotificationCampaignRepository>();
-        services.AddSingleton<IOrderRepository, InMemoryOrderRepository>();
         services.AddSingleton<ISensitiveDataAuditRepository, InMemorySensitiveDataAuditRepository>();
 
         return services;

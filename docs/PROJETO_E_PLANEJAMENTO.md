@@ -249,7 +249,7 @@ O foco da V4 sera o CID:
 ### Migracao EF Core por Modulo
 
 - [x] Plans migrado para EF Core com fallback em memoria.
-- [ ] Orders migrado para EF Core.
+- [x] Orders migrado para EF Core com fallback em memoria.
 - [ ] Notification Campaigns migrado para EF Core.
 - [ ] Clients migrado para EF Core preservando criptografia e mascaramento.
 - [ ] Audit log sensivel migrado para EF Core.
