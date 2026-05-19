@@ -22,6 +22,7 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 const string LoginRateLimitPolicy = "login";
 const string SensitiveDataRateLimitPolicy = "sensitive-data";
+const string FrontendCorsPolicy = "frontend";
 
 builder.Services.AddOpenApi();
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -30,6 +31,23 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+var allowedFrontendOrigins = builder.Configuration
+    .GetSection("Frontend:AllowedOrigins")
+    .Get<string[]>() ?? new[]
+    {
+        "http://localhost:3000",
+        "http://localhost:3001"
+    };
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        FrontendCorsPolicy,
+        policy => policy
+            .WithOrigins(allowedFrontendOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
@@ -136,6 +154,7 @@ app.Use(async (context, next) =>
             context.Response.StatusCode);
     }
 });
+app.UseCors(FrontendCorsPolicy);
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();

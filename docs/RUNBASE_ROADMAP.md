@@ -240,13 +240,13 @@ Criterio de pronto:
 
 Objetivo: criar o admin em Next.js consumindo a API real.
 
-- [ ] Criar app Next.js com TypeScript.
-- [ ] Configurar rotas protegidas.
-- [ ] Criar tela de login.
-- [ ] Criar layout administrativo.
-- [ ] Criar sidebar com itens baseados na role.
-- [ ] Criar client HTTP com tratamento de token e refresh.
-- [ ] Criar estados de loading, erro, vazio e permissao negada.
+- [x] Criar app Next.js com TypeScript.
+- [x] Configurar rotas protegidas.
+- [x] Criar tela de login.
+- [x] Criar layout administrativo.
+- [x] Criar sidebar com itens baseados na role.
+- [x] Criar client HTTP com tratamento de token e refresh.
+- [x] Criar estados de loading, erro, vazio e permissao negada.
 
 Estrutura sugerida:
 
