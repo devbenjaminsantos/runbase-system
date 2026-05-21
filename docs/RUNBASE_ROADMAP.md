@@ -288,7 +288,7 @@ Criterio de pronto:
 
 Objetivo: colocar o produto em ambiente cloud.
 
-- [ ] Criar migrations.
+- [x] Criar migrations.
 - [ ] Configurar Azure SQL.
 - [ ] Configurar Azure App Service para API.
 - [ ] Configurar Azure Static Web Apps para frontend.
