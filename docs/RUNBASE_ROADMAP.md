@@ -271,7 +271,7 @@ Criterio de pronto:
 Objetivo: entregar o fluxo operacional completo.
 
 - [ ] Dashboard com metricas reais.
-- [ ] Users list/create/edit/status.
+- [x] Users list/create/edit/status.
 - [ ] Clients list/create/edit/status.
 - [ ] Plans list/create/edit/toggle active.
 - [ ] Orders list/create/edit/status.

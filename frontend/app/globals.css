@@ -38,6 +38,10 @@ input {
   font: inherit;
 }
 
+select {
+  font: inherit;
+}
+
 button {
   cursor: pointer;
 }
@@ -174,6 +178,16 @@ a {
 
 .button-full {
   width: 100%;
+}
+
+.button-secondary {
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: #344054;
+}
+
+.button-secondary:hover {
+  background: var(--panel-soft);
 }
 
 .alert {
@@ -339,6 +353,57 @@ a {
   margin-top: 20px;
 }
 
+.stack {
+  display: grid;
+  gap: 16px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.toolbar-search {
+  max-width: 360px;
+}
+
+.form-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.form-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.danger-button {
+  color: var(--danger);
+}
+
 .table-wrap {
   overflow: hidden;
   border: 1px solid var(--line);
@@ -458,6 +523,21 @@ a {
 
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .toolbar {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-search {
+    max-width: none;
+    min-width: min(100%, 260px);
+    flex: 1 1 260px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
   }
 }
 

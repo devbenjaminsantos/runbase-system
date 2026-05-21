@@ -21,9 +21,11 @@ export function ProtectedPage({
   const router = useRouter();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "denied">("loading");
+  const allowedRoles = roles.join("|");
 
   useEffect(() => {
     let active = true;
+    const roleSet = new Set(allowedRoles.split("|"));
     const session = readSession();
 
     if (!session) {
@@ -39,7 +41,7 @@ export function ProtectedPage({
 
         writeSession({ ...session, user: profile });
         setUser(profile);
-        setStatus(roles.includes(profile.role) ? "ready" : "denied");
+        setStatus(roleSet.has(profile.role) ? "ready" : "denied");
       })
       .catch(() => {
         if (active) {
@@ -50,7 +52,7 @@ export function ProtectedPage({
     return () => {
       active = false;
     };
-  }, [roles, router]);
+  }, [allowedRoles, router]);
 
   if (status === "loading" || !user) {
     return <div className="state">Loading</div>;
