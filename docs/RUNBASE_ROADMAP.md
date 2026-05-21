@@ -117,7 +117,7 @@ Objetivo: deixar claro que o projeto entrou na fase RunBase.
 
 - [x] Registrar roadmap RunBase.
 - [x] Atualizar README com a nova direcao.
-- [x] Definir se o codigo legado ficara como `legacy/` ou se a nova stack sera criada em pastas paralelas.
+- [x] Remover codigo legado apos consolidar a nova stack.
 - [x] Definir estrutura inicial do monorepo.
 
 Criterio de pronto:

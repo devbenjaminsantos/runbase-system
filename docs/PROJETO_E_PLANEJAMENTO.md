@@ -83,7 +83,7 @@ Nesta fase, o objetivo foi sair de uma demonstracao visual e transformar a exper
 
 A V2 transformou o painel em um prototipo funcional. Ela mostrou que a ideia tinha comportamento real, mas tambem deixou claro que a proxima etapa deveria ter uma arquitetura mais forte, mais escalavel e mais alinhada com o objetivo final do produto.
 
-Por isso, essa versao foi preservada em `legacy/` como referencia de produto, UX e aprendizado tecnico.
+Por isso, essa versao foi usada como referencia de produto, UX e aprendizado tecnico durante a reconstrucao. Depois da consolidacao da nova stack, o codigo legado foi removido do repositorio ativo.
 
 ## V3 - RunBase Foundation
 
@@ -93,7 +93,7 @@ Aqui, o projeto deixa de ser apenas uma evolucao do Olympus Admin e passa a ter 
 
 ### Decisao de arquitetura
 
-A decisao foi reconstruir a base de forma incremental, mantendo o legado como referencia.
+A decisao foi reconstruir a base de forma incremental, usando o legado apenas como referencia temporaria.
 
 O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e contratos da API sao a base do produto. O frontend em Next.js deve nascer depois, ja consumindo endpoints reais.
 
@@ -112,7 +112,7 @@ O backend vem primeiro porque autenticacao, roles, regras de dominio, banco e co
 
 ### O que ja foi feito na V3
 
-- [x] Codigo legado movido para `legacy/`.
+- [x] Codigo legado removido apos consolidacao da nova stack.
 - [x] Nova pasta `backend/` criada.
 - [x] Solution `.NET` criada com `RunBase.slnx`.
 - [x] Projetos criados:

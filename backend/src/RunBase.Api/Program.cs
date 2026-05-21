@@ -17,6 +17,7 @@ using RunBase.Application.Security;
 using RunBase.Application.Users;
 using RunBase.Infrastructure;
 using RunBase.Infrastructure.Auth;
+using RunBase.Infrastructure.Security;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +28,7 @@ const string FrontendCorsPolicy = "frontend";
 builder.Services.AddOpenApi();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false));
 });
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -52,6 +53,7 @@ builder.Services.AddCors(options =>
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>() ?? new JwtOptions();
+ValidateProductionConfiguration(builder.Environment, builder.Configuration, jwtOptions);
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -123,6 +125,21 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.TryAdd("X-Frame-Options", "DENY");
+    context.Response.Headers.TryAdd("Referrer-Policy", "no-referrer");
+    context.Response.Headers.TryAdd("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+    if (!app.Environment.IsDevelopment())
+    {
+        context.Response.Headers.TryAdd("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'");
+    }
+
+    await next();
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -743,6 +760,45 @@ static string GetUserOrClientPartitionKey(HttpContext httpContext)
 {
     return httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) ??
         GetClientPartitionKey(httpContext);
+}
+
+static void ValidateProductionConfiguration(
+    IWebHostEnvironment environment,
+    IConfiguration configuration,
+    JwtOptions jwtOptions)
+{
+    if (environment.IsDevelopment())
+    {
+        return;
+    }
+
+    if (string.IsNullOrWhiteSpace(configuration.GetConnectionString("DefaultConnection")))
+    {
+        throw new InvalidOperationException("ConnectionStrings:DefaultConnection must be configured outside development.");
+    }
+
+    if (string.IsNullOrWhiteSpace(jwtOptions.SigningKey) ||
+        jwtOptions.SigningKey == "runbase-development-signing-key-change-before-production" ||
+        Encoding.UTF8.GetByteCount(jwtOptions.SigningKey) < 32)
+    {
+        throw new InvalidOperationException("Auth:Jwt:SigningKey must be a production secret with at least 256 bits.");
+    }
+
+    var sensitiveDataKey = configuration
+        .GetSection(SensitiveDataProtectionOptions.SectionName)
+        .Get<SensitiveDataProtectionOptions>()?.Key;
+
+    if (string.IsNullOrWhiteSpace(sensitiveDataKey))
+    {
+        throw new InvalidOperationException("Security:SensitiveData:Key must be configured outside development.");
+    }
+
+    var seedAdminPassword = configuration["Auth:SeedAdmin:Password"];
+
+    if (string.IsNullOrWhiteSpace(seedAdminPassword) || seedAdminPassword == "Admin123!")
+    {
+        throw new InvalidOperationException("Auth:SeedAdmin:Password must be changed outside development.");
+    }
 }
 
 internal sealed class ValidationFilter<TRequest> : IEndpointFilter

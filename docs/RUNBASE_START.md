@@ -38,9 +38,6 @@ Criterio de pronto:
 
 ```text
 RunBase/
-  legacy/
-    frontend-static/
-    backend-node/
   backend/
     RunBase.slnx
     src/
@@ -61,18 +58,18 @@ RunBase/
     RUNBASE_START.md
 ```
 
-## Como lidar com o codigo atual
+## Como lidar com o codigo antigo
 
-O codigo atual deve virar referencia de produto e UX, nao a base tecnica final.
+O codigo antigo serviu como referencia de produto e UX durante o nascimento da nova stack, mas nao faz mais parte da base tecnica final.
 
-Plano recomendado:
+Plano adotado:
 
 1. Criar a nova stack em pastas paralelas.
 2. Validar a base ASP.NET Core.
 3. Validar a base Next.js.
-4. Depois mover o codigo antigo para `legacy/`, evitando misturar estruturas durante o nascimento da nova stack.
+4. Remover o codigo legado apos consolidar backend, frontend e roadmap.
 
-Essa ordem reduz risco porque o projeto atual continua acessivel enquanto a nova fundacao e criada.
+Essa ordem reduziu risco porque o projeto antigo ficou acessivel enquanto a nova fundacao era criada.
 
 ## Primeiro modulo depois da fundacao
 

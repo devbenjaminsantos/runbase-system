@@ -10,5 +10,5 @@ public sealed class AuthSeedOptions
 
     public string Email { get; init; } = "admin@runbase.local";
 
-    public string Password { get; init; } = "Admin123!";
+    public string Password { get; init; } = string.Empty;
 }

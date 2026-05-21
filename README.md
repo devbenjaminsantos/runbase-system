@@ -11,7 +11,7 @@ The current direction is a modern product foundation with:
 - Azure Static Web Apps and Azure App Service for deployment
 - GitHub Actions for CI/CD
 
-The original Olympus Admin prototype is preserved under `legacy/` as product and UX reference.
+The original Olympus Admin prototype was removed after the RunBase foundation became the active product base.
 
 For the Portuguese product narrative, version history, and planning notes, see [docs/PROJETO_E_PLANEJAMENTO.md](./docs/PROJETO_E_PLANEJAMENTO.md).
 
@@ -27,7 +27,7 @@ The new RunBase foundation currently includes:
 - Refresh token rotation at `/api/auth/refresh`
 - Protected current-user endpoint at `/api/auth/me`
 - Initial xUnit test project
-- Legacy static frontend and Node backend preserved under `legacy/`
+- Next.js frontend under `frontend/`
 
 ## Repository Structure
 
@@ -42,9 +42,11 @@ RunBase/
       RunBase.Infrastructure/
     tests/
       RunBase.Application.Tests/
-  legacy/
-    frontend-static/
-    backend-node/
+  frontend/
+    app/
+    components/
+    lib/
+    public/
   docs/
     PROJETO_E_PLANEJAMENTO.md
     RUNBASE_ROADMAP.md
@@ -72,50 +74,14 @@ Local endpoints:
 - Scalar API reference: `http://localhost:5140/scalar/v1`
 - OpenAPI document: `http://localhost:5140/openapi/v1.json`
 
-Development admin seed:
-
-```json
-{
-  "email": "admin@runbase.local",
-  "password": "Admin123!"
-}
-```
-
-Environment connection string:
+Required production environment values:
 
 ```text
 ConnectionStrings__DefaultConnection
+Auth__Jwt__SigningKey
+Auth__SeedAdmin__Password
+Security__SensitiveData__Key
 ```
-
-## Legacy Prototype
-
-The legacy prototype contains the previous static admin UI and Node/Express backend.
-
-Static frontend:
-
-```bash
-cd legacy/frontend-static
-```
-
-Open `index.html` directly or run it with a local static server.
-
-Node backend:
-
-```bash
-cd legacy/backend-node/backend
-npm install
-npm run dev
-npm test
-```
-
-Local MySQL for the legacy backend:
-
-```bash
-cd legacy
-docker compose up -d
-```
-
-Then configure `legacy/backend-node/backend/.env` using `.env.example`.
 
 ## Documentation
 
