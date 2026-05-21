@@ -6,7 +6,7 @@ export const navItems: NavItem[] = [
   { href: "/clients", label: "Clients", roles: ["Admin", "Manager"] },
   { href: "/plans", label: "Plans", roles: ["Admin", "Manager"] },
   { href: "/orders", label: "Orders", roles: ["Admin", "Manager", "Support"] },
-  { href: "/settings", label: "Settings", roles: ["Admin"] }
+  { href: "/settings", label: "Settings", roles: ["Admin", "Manager", "Support", "Viewer"] }
 ];
 
 export function canAccess(role: UserRole, item: NavItem): boolean {
