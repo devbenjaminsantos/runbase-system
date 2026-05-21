@@ -452,6 +452,11 @@ a {
   border-bottom: 0;
 }
 
+.table-select {
+  min-height: 36px;
+  width: 160px;
+}
+
 .badge {
   display: inline-flex;
   min-height: 24px;

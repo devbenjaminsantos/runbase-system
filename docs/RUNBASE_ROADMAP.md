@@ -274,7 +274,7 @@ Objetivo: entregar o fluxo operacional completo.
 - [x] Users list/create/edit/status.
 - [x] Clients list/create/edit/status.
 - [x] Plans list/create/edit/toggle active.
-- [ ] Orders list/create/edit/status.
+- [x] Orders list/create/edit/status.
 - [ ] Settings do usuario logado.
 - [ ] Filtros e busca nas listas principais.
 
