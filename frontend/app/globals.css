@@ -137,6 +137,23 @@ a {
   font-weight: 700;
 }
 
+.check-field {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  color: #344054;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 25px;
+}
+
+.check-field input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand);
+}
+
 .input {
   width: 100%;
   min-height: 44px;
