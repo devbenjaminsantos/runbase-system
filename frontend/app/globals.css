@@ -455,6 +455,11 @@ a {
   padding: 18px;
 }
 
+.compact-state {
+  margin-bottom: 16px;
+  padding: 12px;
+}
+
 .state-error {
   border-color: #fecdca;
   background: #fff8f7;
