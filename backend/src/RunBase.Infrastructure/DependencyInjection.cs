@@ -29,7 +29,9 @@ public static class DependencyInjection
         if (!string.IsNullOrWhiteSpace(connectionString))
         {
             services.AddDbContext<RunBaseDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(
+                    connectionString,
+                    sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
             services.AddScoped<IClientRepository, EfClientRepository>();
             services.AddScoped<INotificationCampaignRepository, EfNotificationCampaignRepository>();

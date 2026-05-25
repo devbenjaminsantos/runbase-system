@@ -83,6 +83,17 @@ Auth__SeedAdmin__Password
 Security__SensitiveData__Key
 ```
 
+## Security Follow-ups
+
+The current frontend stores the authenticated session in `localStorage`. This is acceptable for the current development phase because the UI does not render unsafe HTML and the API avoids exposing tokens in URLs, but it should be revisited before production hardening.
+
+Planned improvements:
+
+- Move refresh token handling to a `HttpOnly`, `Secure`, `SameSite` cookie.
+- Keep only short-lived access tokens in frontend memory where possible.
+- Store refresh tokens as hashes in the database instead of storing raw token values.
+- Revalidate the authentication flow after Azure deployment and HTTPS/CORS configuration.
+
 ## Documentation
 
 - [Product and planning notes in Portuguese](./docs/PROJETO_E_PLANEJAMENTO.md)
