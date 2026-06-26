@@ -65,6 +65,14 @@ dotnet test RunBase.slnx --no-build
 dotnet run --project src/RunBase.Api/RunBase.Api.csproj --launch-profile http
 ```
 
+Backend container build:
+
+```bash
+cd backend
+docker build -t runbase-api:local .
+docker run --rm -p 8080:8080 runbase-api:local
+```
+
 Local endpoints:
 
 - API health: `http://localhost:5140/health`

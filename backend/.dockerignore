@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/.DS_Store
+**/*.user
+**/*.suo
+**/*.log
+tests/
+TestResults/
+.git/
+.gitignore
+dotnet-tools.json
