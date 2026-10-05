@@ -9,9 +9,14 @@ public sealed class AuthPoliciesTests
     public void All_DefinesExpectedRoleAccess()
     {
         AssertPolicy(AuthPolicies.ManageUsers, UserRole.Admin);
+        AssertPolicy(AuthPolicies.ViewClients, UserRole.Admin, UserRole.Manager, UserRole.Support);
         AssertPolicy(AuthPolicies.ManageClients, UserRole.Admin, UserRole.Manager);
         AssertPolicy(AuthPolicies.ManagePlans, UserRole.Admin, UserRole.Manager);
-        AssertPolicy(AuthPolicies.ManageOrders, UserRole.Admin, UserRole.Manager, UserRole.Support);
+        AssertPolicy(AuthPolicies.ViewOrders, UserRole.Admin, UserRole.Manager, UserRole.Support);
+        AssertPolicy(AuthPolicies.CreateOrders, UserRole.Admin, UserRole.Manager);
+        AssertPolicy(AuthPolicies.EditOrders, UserRole.Admin, UserRole.Manager);
+        AssertPolicy(AuthPolicies.UpdateOrderStatus, UserRole.Admin, UserRole.Manager, UserRole.Support);
+        AssertPolicy(AuthPolicies.DeleteOrders, UserRole.Admin, UserRole.Manager);
         AssertPolicy(
             AuthPolicies.ViewDashboard,
             UserRole.Admin,

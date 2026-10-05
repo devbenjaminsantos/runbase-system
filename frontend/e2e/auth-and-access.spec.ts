@@ -10,12 +10,18 @@ const setupKey = "runbase-development-setup-key-change-before-production";
 
 let adminSession: Session;
 let viewerCredentials: { email: string; password: string };
+let supportCredentials: { email: string; password: string };
+const supportClientName = "Playwright Support Client";
 
 test.describe.serial("authentication and role access", () => {
   test.beforeAll(async () => {
     viewerCredentials = {
       email: `viewer-${Date.now()}@runbase.local`,
       password: "Viewer123!"
+    };
+    supportCredentials = {
+      email: `support-${Date.now()}@runbase.local`,
+      password: "Support123!"
     };
   });
 
@@ -63,6 +69,48 @@ test.describe.serial("authentication and role access", () => {
       }
     });
     expect(createViewerResponse.ok()).toBeTruthy();
+
+    const createSupportResponse = await page.request.post(`${apiUrl}/api/users`, {
+      data: {
+        name: "Playwright Support",
+        email: supportCredentials.email,
+        password: supportCredentials.password,
+        role: "Support",
+        status: "Active"
+      },
+      headers: {
+        authorization: `Bearer ${adminSession.accessToken}`
+      }
+    });
+    expect(createSupportResponse.ok()).toBeTruthy();
+
+    const createClientResponse = await page.request.post(`${apiUrl}/api/clients`, {
+      data: {
+        name: supportClientName,
+        email: `support-client-${Date.now()}@runbase.local`,
+        status: "Active",
+        planStage: "Free",
+        nextBillingAt: null,
+        dataSource: "Manual"
+      },
+      headers: {
+        authorization: `Bearer ${adminSession.accessToken}`
+      }
+    });
+    expect(createClientResponse.ok()).toBeTruthy();
+    const supportClient = await createClientResponse.json() as { id: string };
+    const createOrderResponse = await page.request.post(`${apiUrl}/api/orders`, {
+      data: {
+        clientId: supportClient.id,
+        planStage: "Plus",
+        status: "Pending",
+        finalAmount: 49.9
+      },
+      headers: {
+        authorization: `Bearer ${adminSession.accessToken}`
+      }
+    });
+    expect(createOrderResponse.ok()).toBeTruthy();
   });
 
   test("logs in and shows the complete admin navigation", async ({ page }) => {
@@ -86,6 +134,29 @@ test.describe.serial("authentication and role access", () => {
 
     await expect(page.getByRole("heading", { name: "Access denied" })).toBeVisible();
     await expect(page.getByText("Permission denied")).toBeVisible();
+  });
+
+  test("lets Support read orders and update status without commercial actions", async ({ page }) => {
+    await loginThroughUi(page, supportCredentials);
+    await page.goto("/orders");
+
+    await expect(page.getByRole("heading", { name: "Orders" })).toBeVisible();
+    await expect(page.getByText(supportClientName)).toBeVisible();
+    await expect(page.getByRole("button", { name: "New order" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Edit order for/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Delete order for/ })).toHaveCount(0);
+
+    const statusSelect = page.getByRole("combobox", { name: `Status for ${supportClientName}` });
+    const statusResponsePromise = page.waitForResponse((response) =>
+      response.url().includes("/api/orders/") &&
+      response.url().endsWith("/status") &&
+      response.request().method() === "PATCH"
+    );
+    await statusSelect.selectOption("Processing");
+    const statusResponse = await statusResponsePromise;
+
+    expect(statusResponse.ok()).toBeTruthy();
+    await expect(statusSelect).toHaveValue("Processing");
   });
 
   test("refreshes an invalid access token without returning to login", async ({ page }) => {

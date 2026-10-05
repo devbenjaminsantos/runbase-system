@@ -434,7 +434,7 @@ users.MapDelete("/{id:guid}", async (
 .WithSummary("Deletes a user.");
 
 var clients = app.MapGroup("/api/clients")
-    .RequireAuthorization(AuthPolicies.ManageClients)
+    .RequireAuthorization()
     .WithTags("Clients");
 
 clients.MapGet("/", async (
@@ -445,6 +445,7 @@ clients.MapGet("/", async (
 
     return Results.Ok(result);
 })
+.RequireAuthorization(AuthPolicies.ViewClients)
 .WithName("ListClients")
 .WithSummary("Lists clients.");
 
@@ -459,6 +460,7 @@ clients.MapGet("/{id:guid}", async (
         ? Results.Ok(result.Value)
         : Results.NotFound();
 })
+.RequireAuthorization(AuthPolicies.ViewClients)
 .WithName("GetClient")
 .WithSummary("Gets a client by id.");
 
@@ -514,6 +516,7 @@ clients.MapPost("/", async (
     };
 })
 .AddEndpointFilter<ValidationFilter<CreateClientRequest>>()
+.RequireAuthorization(AuthPolicies.ManageClients)
 .WithName("CreateClient")
 .WithSummary("Creates a client with a current plan stage.");
 
@@ -535,6 +538,7 @@ clients.MapPut("/{id:guid}", async (
     };
 })
 .AddEndpointFilter<ValidationFilter<UpdateClientRequest>>()
+.RequireAuthorization(AuthPolicies.ManageClients)
 .WithName("UpdateClient")
 .WithSummary("Updates a client's profile, status, and plan stage.");
 
@@ -549,6 +553,7 @@ clients.MapDelete("/{id:guid}", async (
         ? Results.NoContent()
         : Results.NotFound();
 })
+.RequireAuthorization(AuthPolicies.ManageClients)
 .WithName("DeleteClient")
 .WithSummary("Deletes a client.");
 
@@ -652,7 +657,7 @@ plans.MapDelete("/{id:guid}", async (
 .WithSummary("Deletes a plan.");
 
 var orders = app.MapGroup("/api/orders")
-    .RequireAuthorization(AuthPolicies.ManageOrders)
+    .RequireAuthorization()
     .WithTags("Orders");
 
 orders.MapGet("/", async (
@@ -663,6 +668,7 @@ orders.MapGet("/", async (
 
     return Results.Ok(result);
 })
+.RequireAuthorization(AuthPolicies.ViewOrders)
 .WithName("ListOrders")
 .WithSummary("Lists orders.");
 
@@ -677,6 +683,7 @@ orders.MapGet("/{id:guid}", async (
         ? Results.Ok(result.Value)
         : Results.NotFound();
 })
+.RequireAuthorization(AuthPolicies.ViewOrders)
 .WithName("GetOrder")
 .WithSummary("Gets an order by id.");
 
@@ -696,6 +703,7 @@ orders.MapPost("/", async (
     };
 })
 .AddEndpointFilter<ValidationFilter<CreateOrderRequest>>()
+.RequireAuthorization(AuthPolicies.CreateOrders)
 .WithName("CreateOrder")
 .WithSummary("Creates an order with a preserved final amount.");
 
@@ -718,6 +726,7 @@ orders.MapPut("/{id:guid}", async (
     };
 })
 .AddEndpointFilter<ValidationFilter<UpdateOrderRequest>>()
+.RequireAuthorization(AuthPolicies.EditOrders)
 .WithName("UpdateOrder")
 .WithSummary("Updates an order.");
 
@@ -738,6 +747,7 @@ orders.MapPatch("/{id:guid}/status", async (
     };
 })
 .AddEndpointFilter<ValidationFilter<UpdateOrderStatusRequest>>()
+.RequireAuthorization(AuthPolicies.UpdateOrderStatus)
 .WithName("UpdateOrderStatus")
 .WithSummary("Updates an order status.");
 
@@ -752,6 +762,7 @@ orders.MapDelete("/{id:guid}", async (
         ? Results.NoContent()
         : Results.NotFound();
 })
+.RequireAuthorization(AuthPolicies.DeleteOrders)
 .WithName("DeleteOrder")
 .WithSummary("Deletes an order.");
 

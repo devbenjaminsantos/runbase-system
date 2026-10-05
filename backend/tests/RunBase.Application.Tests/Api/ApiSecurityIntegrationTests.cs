@@ -48,7 +48,7 @@ public sealed class ApiSecurityIntegrationTests
     [InlineData(UserRole.Manager, "/api/plans", HttpStatusCode.OK)]
     [InlineData(UserRole.Manager, "/api/orders", HttpStatusCode.OK)]
     [InlineData(UserRole.Support, "/api/users", HttpStatusCode.Forbidden)]
-    [InlineData(UserRole.Support, "/api/clients", HttpStatusCode.Forbidden)]
+    [InlineData(UserRole.Support, "/api/clients", HttpStatusCode.OK)]
     [InlineData(UserRole.Support, "/api/plans", HttpStatusCode.Forbidden)]
     [InlineData(UserRole.Support, "/api/orders", HttpStatusCode.OK)]
     [InlineData(UserRole.Viewer, "/api/users", HttpStatusCode.Forbidden)]

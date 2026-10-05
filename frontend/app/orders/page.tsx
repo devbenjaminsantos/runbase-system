@@ -40,12 +40,12 @@ const emptyForm: OrderForm = {
 export default function OrdersPage() {
   return (
     <ProtectedPage roles={["Admin", "Manager", "Support"]} subtitle="Commercial activity" title="Orders">
-      {() => <OrdersTable />}
+      {(user) => <OrdersTable canManageOrders={user.role === "Admin" || user.role === "Manager"} />}
     </ProtectedPage>
   );
 }
 
-function OrdersTable() {
+function OrdersTable({ canManageOrders }: { canManageOrders: boolean }) {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
@@ -227,10 +227,12 @@ function OrdersTable() {
           <button aria-label="Refresh orders" className="icon-button" onClick={() => void loadData()} title="Refresh orders" type="button">
             <RefreshCcw aria-hidden size={16} />
           </button>
-          <button className="button" disabled={clients.length === 0} onClick={openCreateForm} type="button">
-            <Plus aria-hidden size={16} />
-            <span>New order</span>
-          </button>
+          {canManageOrders ? (
+            <button className="button" disabled={clients.length === 0} onClick={openCreateForm} type="button">
+              <Plus aria-hidden size={16} />
+              <span>New order</span>
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -248,7 +250,7 @@ function OrdersTable() {
         ))}
       </div>
 
-      {clients.length === 0 ? <div className="state">Create a client before creating orders.</div> : null}
+      {canManageOrders && clients.length === 0 ? <div className="state">Create a client before creating orders.</div> : null}
       {message ? <div className="alert alert-error">{message}</div> : null}
 
       <div className={`orders-workspace ${isFormOpen ? "orders-workspace-panel-open" : ""}`}>
@@ -266,7 +268,7 @@ function OrdersTable() {
                     <th>Plan</th>
                     <th>Status</th>
                     <th>Amount</th>
-                    <th>Actions</th>
+                    {canManageOrders ? <th>Actions</th> : null}
                   </tr>
                 </thead>
                 <tbody>
@@ -291,16 +293,18 @@ function OrdersTable() {
                           </select>
                         </td>
                         <td><span className="order-amount">{formatCurrency(order.finalAmount)}</span></td>
-                        <td>
-                          <div className="row-actions">
-                            <button aria-label={`Edit order for ${client?.name ?? "client"}`} className="icon-button" onClick={() => openEditForm(order)} title="Edit order" type="button">
-                              <Edit2 aria-hidden size={16} />
-                            </button>
-                            <button aria-label={`Delete order for ${client?.name ?? "client"}`} className="icon-button danger-button" onClick={() => void handleDelete(order)} title="Delete order" type="button">
-                              <Trash2 aria-hidden size={16} />
-                            </button>
-                          </div>
-                        </td>
+                        {canManageOrders ? (
+                          <td>
+                            <div className="row-actions">
+                              <button aria-label={`Edit order for ${client?.name ?? "client"}`} className="icon-button" onClick={() => openEditForm(order)} title="Edit order" type="button">
+                                <Edit2 aria-hidden size={16} />
+                              </button>
+                              <button aria-label={`Delete order for ${client?.name ?? "client"}`} className="icon-button danger-button" onClick={() => void handleDelete(order)} title="Delete order" type="button">
+                                <Trash2 aria-hidden size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        ) : null}
                       </tr>
                     );
                   })}
@@ -310,7 +314,7 @@ function OrdersTable() {
           )}
         </section>
 
-        {isFormOpen ? (
+        {canManageOrders && isFormOpen ? (
           <aside className="detail-panel order-detail-panel" aria-labelledby="order-panel-title">
             <form onSubmit={handleSubmit}>
               <div className="detail-panel-header">

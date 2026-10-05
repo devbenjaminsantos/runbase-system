@@ -376,6 +376,79 @@ public sealed class ApiIntegrationTests
     }
 
     [Fact]
+    public async Task OrdersEndpoints_WithSupportRole_AllowReadsAndStatusOnly()
+    {
+        await using var factory = CreateFactory();
+        var client = factory.CreateClient();
+        await AuthorizeAsAdminAsync(client);
+        var customer = await CreateClientAsync(client);
+        var createOrderResponse = await client.PostAsJsonAsync(
+            "/api/orders",
+            new CreateOrderRequest(
+                customer.Id,
+                PlanStage.Plus,
+                OrderStatus.Pending,
+                49.90m),
+            JsonOptions);
+        var order = await ReadAsync<OrderResponse>(createOrderResponse);
+        var supportEmail = $"orders-support-{Guid.NewGuid():N}@runbase.local";
+        const string supportPassword = "Support123!Secure";
+        var createSupportResponse = await client.PostAsJsonAsync(
+            "/api/users",
+            new CreateUserRequest(
+                "Orders Support",
+                supportEmail,
+                supportPassword,
+                UserRole.Support,
+                UserStatus.Active),
+            JsonOptions);
+        createSupportResponse.EnsureSuccessStatusCode();
+
+        client.DefaultRequestHeaders.Authorization = null;
+        var supportToken = await LoginAsync(client, supportEmail, supportPassword);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            supportToken.AccessToken);
+
+        var listClientsResponse = await client.GetAsync("/api/clients");
+        var getClientResponse = await client.GetAsync($"/api/clients/{customer.Id}");
+        var listOrdersResponse = await client.GetAsync("/api/orders");
+        var getOrderResponse = await client.GetAsync($"/api/orders/{order.Id}");
+        var updateStatusResponse = await client.PatchAsJsonAsync(
+            $"/api/orders/{order.Id}/status",
+            new UpdateOrderStatusRequest(OrderStatus.Processing),
+            JsonOptions);
+        var createResponse = await client.PostAsJsonAsync(
+            "/api/orders",
+            new CreateOrderRequest(
+                customer.Id,
+                PlanStage.Premium,
+                OrderStatus.Pending,
+                99.90m),
+            JsonOptions);
+        var updateResponse = await client.PutAsJsonAsync(
+            $"/api/orders/{order.Id}",
+            new UpdateOrderRequest(
+                customer.Id,
+                PlanStage.Premium,
+                OrderStatus.Processing,
+                1m),
+            JsonOptions);
+        var deleteResponse = await client.DeleteAsync($"/api/orders/{order.Id}");
+        var orderAfterDeniedDeleteResponse = await client.GetAsync($"/api/orders/{order.Id}");
+
+        Assert.Equal(HttpStatusCode.OK, listClientsResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, getClientResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, listOrdersResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, getOrderResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, updateStatusResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, createResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, updateResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, deleteResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, orderAfterDeniedDeleteResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task DeletedUser_WithPreviouslyIssuedToken_ReturnsUnauthorized()
     {
         await using var factory = CreateFactory();
