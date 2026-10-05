@@ -11,7 +11,7 @@ const setupKey = "runbase-development-setup-key-change-before-production";
 let adminSession: Session;
 let viewerCredentials: { email: string; password: string };
 let supportCredentials: { email: string; password: string };
-const supportClientName = "Playwright Support Client";
+let supportClientName = "Playwright Support Client";
 
 test.describe.serial("authentication and role access", () => {
   test.beforeAll(async () => {
@@ -123,6 +123,29 @@ test.describe.serial("authentication and role access", () => {
     await expect(navigation.getByRole("link", { name: "Clients", exact: true })).toBeVisible();
     await expect(navigation.getByRole("link", { name: "Plans", exact: true })).toBeVisible();
     await expect(navigation.getByRole("link", { name: "Orders", exact: true })).toBeVisible();
+  });
+
+  test("edits a client without requiring the protected email", async ({ page }) => {
+    await loginThroughUi(page, adminCredentials);
+    await page.goto("/clients");
+
+    const clientRow = page.getByRole("row").filter({ hasText: supportClientName });
+    await clientRow.getByTitle("Edit client").click();
+    await expect(page.getByRole("heading", { name: "Edit client" })).toBeVisible();
+    await expect(page.getByLabel("Email", { exact: true })).toHaveCount(0);
+    await expect(page.getByText(`Stored email remains protected and unchanged:`)).toBeVisible();
+
+    const updatedClientName = `${supportClientName} Updated`;
+    await page.getByLabel("Name", { exact: true }).fill(updatedClientName);
+    const updateResponsePromise = page.waitForResponse((response) =>
+      response.url().includes("/api/clients/") && response.request().method() === "PUT"
+    );
+    await page.getByRole("button", { name: "Save client" }).click();
+    const updateResponse = await updateResponsePromise;
+
+    expect(updateResponse.ok()).toBeTruthy();
+    await expect(page.getByText(updatedClientName)).toBeVisible();
+    supportClientName = updatedClientName;
   });
 
   test("hides admin navigation and denies a Viewer on the users page", async ({ page }) => {

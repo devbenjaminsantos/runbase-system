@@ -88,14 +88,8 @@ public sealed class ClientsService : IClientsService
             return ClientResult<ClientResponse>.Failure(ClientError.BillingDateRequired);
         }
 
-        if (await _clients.EmailExistsAsync(request.Email, id, cancellationToken))
-        {
-            return ClientResult<ClientResponse>.Failure(ClientError.EmailAlreadyExists);
-        }
-
         client.Update(
             request.Name,
-            request.Email,
             request.Status,
             request.PlanStage,
             request.DataSource,

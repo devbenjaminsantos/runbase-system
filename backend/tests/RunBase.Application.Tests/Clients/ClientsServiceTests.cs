@@ -70,7 +70,6 @@ public sealed class ClientsServiceTests
 
         var result = await service.UpdateAsync(client.Id, new UpdateClientRequest(
             "Acme Premium",
-            "premium@demo.runbase.local",
             ClientStatus.Suspended,
             PlanStage.Premium,
             DataSource.Imported,
@@ -81,6 +80,8 @@ public sealed class ClientsServiceTests
         Assert.Equal(PlanStage.Premium, result.Value.PlanStage);
         Assert.Equal(DataSource.Imported, result.Value.DataSource);
         Assert.Equal(nextBillingAt, result.Value.NextBillingAt);
+        Assert.Equal("ac***@demo.runbase.local", result.Value.MaskedEmail);
+        Assert.Equal("acme@demo.runbase.local", client.Email);
     }
 
     [Fact]

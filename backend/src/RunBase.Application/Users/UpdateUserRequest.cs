@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using RunBase.Domain.Users;
 
 namespace RunBase.Application.Users;
@@ -11,5 +12,7 @@ public sealed record UpdateUserRequest(
     [property: EmailAddress]
     [property: StringLength(254)]
     string Email,
+    [property: JsonRequired]
     UserRole Role,
+    [property: JsonRequired]
     UserStatus Status);

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using RunBase.Domain.Users;
 
 namespace RunBase.Application.Users;
@@ -15,5 +16,7 @@ public sealed record CreateUserRequest(
     [property: MinLength(8)]
     [property: StringLength(128)]
     string Password,
+    [property: JsonRequired]
     UserRole Role,
+    [property: JsonRequired]
     UserStatus Status);

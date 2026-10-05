@@ -394,7 +394,7 @@ users.MapPost("/", async (
 })
 .AddEndpointFilter<ValidationFilter<CreateUserRequest>>()
 .WithName("CreateUser")
-.WithSummary("Creates a user with an explicit role.");
+.WithSummary("Creates a user with an explicit role and status.");
 
 users.MapPut("/{id:guid}", async (
     Guid id,
@@ -540,7 +540,7 @@ clients.MapPut("/{id:guid}", async (
 .AddEndpointFilter<ValidationFilter<UpdateClientRequest>>()
 .RequireAuthorization(AuthPolicies.ManageClients)
 .WithName("UpdateClient")
-.WithSummary("Updates a client's profile, status, and plan stage.");
+.WithSummary("Updates a client's non-contact fields without changing the protected email.");
 
 clients.MapDelete("/{id:guid}", async (
     Guid id,

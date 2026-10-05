@@ -123,7 +123,6 @@ function ClientsTable() {
     try {
       const payload = {
         name: form.name,
-        email: form.email,
         status: form.status,
         planStage: form.planStage,
         dataSource: form.dataSource,
@@ -146,6 +145,7 @@ function ClientsTable() {
           },
           body: JSON.stringify({
             ...payload,
+            email: form.email,
             dataSource: form.dataSource === "Manual" ? undefined : form.dataSource
           })
         });
@@ -294,7 +294,7 @@ function ClientsTable() {
               {editingClient ? (
                 <div className="protected-note">
                   <ShieldCheck aria-hidden size={16} />
-                  <span>Stored email is protected. Re-enter it to save changes.</span>
+                  <span>Stored email remains protected and unchanged: {editingClient.maskedEmail}</span>
                 </div>
               ) : null}
               <div className="detail-panel-fields">
@@ -302,10 +302,12 @@ function ClientsTable() {
                   <label htmlFor="client-name">Name</label>
                   <input className="input" id="client-name" minLength={2} onChange={(event) => setForm({ ...form, name: event.target.value })} required value={form.name} />
                 </div>
-                <div className="field">
-                  <label htmlFor="client-email">Email</label>
-                  <input className="input" id="client-email" onChange={(event) => setForm({ ...form, email: event.target.value })} placeholder={editingClient ? editingClient.maskedEmail : undefined} required type="email" value={form.email} />
-                </div>
+                {!editingClient ? (
+                  <div className="field">
+                    <label htmlFor="client-email">Email</label>
+                    <input className="input" id="client-email" onChange={(event) => setForm({ ...form, email: event.target.value })} required type="email" value={form.email} />
+                  </div>
+                ) : null}
                 <div className="field">
                   <label htmlFor="client-status">Status</label>
                   <select className="input" id="client-status" onChange={(event) => setForm({ ...form, status: event.target.value as ClientStatus })} value={form.status}>

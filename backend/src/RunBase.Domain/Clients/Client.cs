@@ -48,7 +48,6 @@ public sealed class Client
 
     public void Update(
         string name,
-        string email,
         ClientStatus status,
         PlanStage planStage,
         DataSource dataSource,
@@ -58,7 +57,6 @@ public sealed class Client
         EnsureBillingDate(planStage, nextBillingAt);
 
         Name = name;
-        Email = email;
         Status = status;
         PlanStage = planStage;
         DataSource = dataSource;

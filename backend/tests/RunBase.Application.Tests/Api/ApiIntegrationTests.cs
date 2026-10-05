@@ -191,6 +191,80 @@ public sealed class ApiIntegrationTests
     }
 
     [Fact]
+    public async Task CreateUser_WithMissingRoleOrStatus_ReturnsBadRequest()
+    {
+        await using var factory = CreateFactory();
+        var client = factory.CreateClient();
+        await AuthorizeAsAdminAsync(client);
+
+        var missingRoleResponse = await client.PostAsJsonAsync(
+            "/api/users",
+            new
+            {
+                name = "Missing Role",
+                email = $"missing-role-{Guid.NewGuid():N}@runbase.local",
+                password = "MissingRole123!",
+                status = "Active"
+            });
+        var missingStatusResponse = await client.PostAsJsonAsync(
+            "/api/users",
+            new
+            {
+                name = "Missing Status",
+                email = $"missing-status-{Guid.NewGuid():N}@runbase.local",
+                password = "MissingStatus123!",
+                role = "Manager"
+            });
+
+        Assert.Equal(HttpStatusCode.BadRequest, missingRoleResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, missingStatusResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateUser_WithMissingRoleOrStatus_ReturnsBadRequestAndPreservesUser()
+    {
+        await using var factory = CreateFactory();
+        var client = factory.CreateClient();
+        await AuthorizeAsAdminAsync(client);
+        var email = $"partial-update-{Guid.NewGuid():N}@runbase.local";
+        var createResponse = await client.PostAsJsonAsync(
+            "/api/users",
+            new CreateUserRequest(
+                "Partial Update User",
+                email,
+                "PartialUpdate123!",
+                UserRole.Manager,
+                UserStatus.Active),
+            JsonOptions);
+        var user = await ReadAsync<UserResponse>(createResponse);
+
+        var missingRoleResponse = await client.PutAsJsonAsync(
+            $"/api/users/{user.Id}",
+            new
+            {
+                name = "Missing Role Update",
+                email,
+                status = "Inactive"
+            });
+        var missingStatusResponse = await client.PutAsJsonAsync(
+            $"/api/users/{user.Id}",
+            new
+            {
+                name = "Missing Status Update",
+                email,
+                role = "Viewer"
+            });
+        var getResponse = await client.GetAsync($"/api/users/{user.Id}");
+        var unchangedUser = await ReadAsync<UserResponse>(getResponse);
+
+        Assert.Equal(HttpStatusCode.BadRequest, missingRoleResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, missingStatusResponse.StatusCode);
+        Assert.Equal("Partial Update User", unchangedUser.Name);
+        Assert.Equal(UserRole.Manager, unchangedUser.Role);
+        Assert.Equal(UserStatus.Active, unchangedUser.Status);
+    }
+
+    [Fact]
     public async Task ClientsCrud_AsAdmin_ReturnsOnlyMaskedEmailAndDeletesClient()
     {
         await using var factory = CreateFactory();
@@ -219,7 +293,6 @@ public sealed class ApiIntegrationTests
             $"/api/clients/{created.Id}",
             new UpdateClientRequest(
                 "Integration Premium Client",
-                email,
                 ClientStatus.Active,
                 PlanStage.Premium,
                 DataSource.Imported,
@@ -233,6 +306,7 @@ public sealed class ApiIntegrationTests
         Assert.DoesNotContain(email, createBody, StringComparison.OrdinalIgnoreCase);
         Assert.NotEqual(email, fetched.MaskedEmail);
         Assert.Contains("***", fetched.MaskedEmail, StringComparison.Ordinal);
+        Assert.Equal(fetched.MaskedEmail, updated.MaskedEmail);
         Assert.Equal(PlanStage.Premium, updated.PlanStage);
         Assert.Equal(DataSource.Imported, updated.DataSource);
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);

@@ -9,10 +9,6 @@ public sealed record UpdateClientRequest(
     [property: Required]
     [property: StringLength(160, MinimumLength = 2)]
     string Name,
-    [property: Required]
-    [property: EmailAddress]
-    [property: StringLength(254)]
-    string Email,
     ClientStatus Status,
     PlanStage PlanStage,
     DataSource DataSource,
