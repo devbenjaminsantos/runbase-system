@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
+using RunBase.Application.Dashboard;
 using RunBase.Application.Orders;
 using RunBase.Application.Plans;
 using RunBase.Application.Users;
@@ -406,6 +407,82 @@ public sealed class ApiIntegrationTests
         Assert.Equal(OrderStatus.Completed, completed.Status);
         Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, getAfterDeleteResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Dashboard_AsViewer_ReturnsAuthorizedOperationalAggregates()
+    {
+        await using var factory = CreateFactory();
+        var client = factory.CreateClient();
+        await AuthorizeAsAdminAsync(client);
+        var nextBillingAt = DateTimeOffset.UtcNow.AddDays(3);
+        var createClientResponse = await client.PostAsJsonAsync(
+            "/api/clients",
+            new CreateClientRequest(
+                "Dashboard Client",
+                $"dashboard-client-{Guid.NewGuid():N}@runbase.local",
+                ClientStatus.Active,
+                PlanStage.Plus,
+                nextBillingAt,
+                DataSource.Manual),
+            JsonOptions);
+        var customer = await ReadAsync<ClientResponse>(createClientResponse);
+        var createPlanResponse = await client.PostAsJsonAsync(
+            "/api/plans",
+            new CreatePlanRequest(
+                "Dashboard Plus",
+                PlanStage.Plus,
+                79.90m,
+                BillingCycle.Monthly,
+                true,
+                nextBillingAt),
+            JsonOptions);
+        createPlanResponse.EnsureSuccessStatusCode();
+        var createOrderResponse = await client.PostAsJsonAsync(
+            "/api/orders",
+            new CreateOrderRequest(
+                customer.Id,
+                PlanStage.Plus,
+                OrderStatus.Completed,
+                79.90m),
+            JsonOptions);
+        createOrderResponse.EnsureSuccessStatusCode();
+        var viewerEmail = $"dashboard-viewer-{Guid.NewGuid():N}@runbase.local";
+        const string viewerPassword = "DashboardViewer123!";
+        var createViewerResponse = await client.PostAsJsonAsync(
+            "/api/users",
+            new CreateUserRequest(
+                "Dashboard Viewer",
+                viewerEmail,
+                viewerPassword,
+                UserRole.Viewer,
+                UserStatus.Active),
+            JsonOptions);
+        createViewerResponse.EnsureSuccessStatusCode();
+
+        client.DefaultRequestHeaders.Authorization = null;
+        var viewerToken = await LoginAsync(client, viewerEmail, viewerPassword);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            viewerToken.AccessToken);
+        var dashboardResponse = await client.GetAsync("/api/dashboard");
+        var dashboard = await ReadAsync<DashboardResponse>(dashboardResponse);
+
+        Assert.Equal(1, dashboard.ActiveClientCount);
+        Assert.Equal(1, dashboard.TotalClientCount);
+        Assert.Equal(1, dashboard.ActivePlanCount);
+        Assert.Equal(1, dashboard.TotalPlanCount);
+        Assert.Equal(0, dashboard.OpenOrderCount);
+        Assert.Equal(1, dashboard.TotalOrderCount);
+        Assert.Equal(79.90m, dashboard.CompletedRevenue);
+        Assert.Equal(0, dashboard.OverdueBillingCount);
+        Assert.Equal(1, dashboard.UpcomingBillingCount);
+        Assert.Equal("Dashboard Client", Assert.Single(dashboard.RecentOrders).ClientName);
+        Assert.Equal(
+            1,
+            Assert.Single(
+                dashboard.PlanDistribution,
+                item => item.Stage == PlanStage.Plus).Count);
     }
 
     [Fact]

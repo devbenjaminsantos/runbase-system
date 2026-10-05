@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using RunBase.Application;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
+using RunBase.Application.Dashboard;
 using RunBase.Application.Health;
 using RunBase.Application.Notifications;
 using RunBase.Application.Orders;
@@ -432,6 +433,21 @@ users.MapDelete("/{id:guid}", async (
 })
 .WithName("DeleteUser")
 .WithSummary("Deletes a user.");
+
+app.MapGet("/api/dashboard", async (
+    IDashboardService dashboardService,
+    CancellationToken cancellationToken) =>
+{
+    var result = await dashboardService.GetAsync(
+        DateTimeOffset.UtcNow,
+        cancellationToken);
+
+    return Results.Ok(result);
+})
+.RequireAuthorization(AuthPolicies.ViewDashboard)
+.WithTags("Dashboard")
+.WithName("GetDashboard")
+.WithSummary("Returns authorized operational aggregates for the dashboard.");
 
 var clients = app.MapGroup("/api/clients")
     .RequireAuthorization()

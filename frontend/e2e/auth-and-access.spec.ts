@@ -125,6 +125,23 @@ test.describe.serial("authentication and role access", () => {
     await expect(navigation.getByRole("link", { name: "Orders", exact: true })).toBeVisible();
   });
 
+  test("shows dashboard unavailability instead of zero metrics", async ({ page }) => {
+    await page.route(`${apiUrl}/api/dashboard`, async (route) => {
+      await route.fulfill({
+        body: JSON.stringify({ message: "temporarily unavailable" }),
+        contentType: "application/json",
+        status: 503
+      });
+    });
+
+    await loginThroughUi(page, adminCredentials);
+
+    await expect(page.getByText("Unable to load operational data.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+    await expect(page.getByText("Active clients")).toHaveCount(0);
+    await page.unroute(`${apiUrl}/api/dashboard`);
+  });
+
   test("edits a client without requiring the protected email", async ({ page }) => {
     await loginThroughUi(page, adminCredentials);
     await page.goto("/clients");

@@ -27,6 +27,7 @@ public sealed class ApiSecurityIntegrationTests
 
     [Theory]
     [InlineData("/api/users")]
+    [InlineData("/api/dashboard")]
     [InlineData("/api/clients")]
     [InlineData("/api/plans")]
     [InlineData("/api/orders")]

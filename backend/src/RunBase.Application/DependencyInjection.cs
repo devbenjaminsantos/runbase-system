@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using RunBase.Application.Auth;
 using RunBase.Application.Clients;
+using RunBase.Application.Dashboard;
 using RunBase.Application.Health;
 using RunBase.Application.Notifications;
 using RunBase.Application.Orders;
@@ -19,6 +20,7 @@ public static class DependencyInjection
         services.AddScoped<ISensitiveDataAccessAuditor, SensitiveDataAccessAuditor>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClientsService, ClientsService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<INotificationCampaignsService, NotificationCampaignsService>();
         services.AddScoped<IOrdersService, OrdersService>();
         services.AddScoped<IPlansService, PlansService>();
