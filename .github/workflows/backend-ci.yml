@@ -67,6 +67,9 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
+
       - name: Test
         run: npm test
 
