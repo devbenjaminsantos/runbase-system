@@ -17,6 +17,12 @@ Cobre:
 - protecao contra uso de Raw SQL;
 - integracao HTTP da API;
 - CRUDs, validacao, headers de seguranca e payloads suspeitos.
+- migrations, schema, constraints, precisao decimal e transacoes em PostgreSQL descartavel.
+
+Os testes HTTP forcam explicitamente repositories em memoria, mesmo quando o processo possui uma
+`ConnectionStrings__DefaultConnection` herdada. A suite de persistencia cria seu proprio container
+`postgres:17.6-alpine` com Testcontainers, usa porta aleatoria e remove o container ao final. Ela nao
+aceita uma connection string externa e nunca deve apontar para Neon ou outro banco compartilhado.
 
 Executar toda a suite:
 
@@ -30,6 +36,13 @@ Executar somente os testes de seguranca da API:
 ```bash
 cd backend
 dotnet test RunBase.slnx --filter FullyQualifiedName~ApiSecurityIntegrationTests
+```
+
+Executar somente os testes PostgreSQL (requer Docker ativo):
+
+```bash
+cd backend
+dotnet test RunBase.slnx --filter FullyQualifiedName~PostgreSqlPersistenceTests
 ```
 
 Gerar cobertura do backend:
@@ -135,7 +148,7 @@ npm audit
 
 O workflow executa:
 
-1. Restore, build e xUnit do backend.
+1. Restore, build e xUnit do backend, incluindo PostgreSQL descartavel via Docker.
 2. Instalacao, Vitest e build do frontend.
 3. Build da imagem Docker da API.
 4. API e frontend locais com Playwright no Chromium.

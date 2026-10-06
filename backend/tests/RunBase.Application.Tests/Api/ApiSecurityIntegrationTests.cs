@@ -234,11 +234,7 @@ public sealed class ApiSecurityIntegrationTests
 
     private static WebApplicationFactory<Program> CreateFactory()
     {
-        return new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                builder.UseSetting("environment", "Development");
-            });
+        return InMemoryApiFactory.Create();
     }
 
     private static async Task<AuthTokenResponse> CreateAndLoginUserAsync(
