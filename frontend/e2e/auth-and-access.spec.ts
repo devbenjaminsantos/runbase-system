@@ -215,6 +215,22 @@ test.describe.serial("authentication and role access", () => {
     adminSession = refreshedSession;
   });
 
+  test("clears the browser session when remote logout is unavailable", async ({ page }) => {
+    await setSession(page, adminSession);
+    await page.route(`${apiUrl}/api/auth/logout`, async (route) => {
+      await route.abort("connectionfailed");
+    });
+    await page.goto("/dashboard");
+    await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Logout" }).click();
+
+    await expect(page).toHaveURL(/\/login\?logout=local-only$/);
+    await expect(page.getByText("Your local session was cleared, but remote token revocation could not be confirmed.")).toBeVisible();
+    await expect(page.evaluate(() => window.localStorage.getItem("runbase.session"))).resolves.toBeNull();
+    await page.unroute(`${apiUrl}/api/auth/logout`);
+  });
+
   test("logs out, clears the browser session and returns to login", async ({ page }) => {
     await setSession(page, adminSession);
     await page.goto("/dashboard");

@@ -169,11 +169,11 @@ describe("API client", () => {
     await expect(apiFetch<void>("/api/orders/order-id", { method: "DELETE" })).resolves.toBeUndefined();
   });
 
-  it("revokes the refresh token and always clears the local session", async () => {
+  it("revokes the refresh token and clears the local session", async () => {
     writeSession(session);
     fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
 
-    await logout();
+    await expect(logout()).resolves.toEqual({ remoteRevocation: "succeeded" });
 
     expect(fetchMock).toHaveBeenCalledWith(`${apiBaseUrl}/api/auth/logout`, {
       method: "POST",
@@ -183,6 +183,50 @@ describe("API client", () => {
       },
       body: JSON.stringify({ refreshToken: "refresh-token" })
     });
+    expect(readSession()).toBeNull();
+  });
+
+  it("clears the local session when logout fails over the network", async () => {
+    writeSession(session);
+    fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    await expect(logout()).resolves.toEqual({ remoteRevocation: "failed" });
+
+    expect(readSession()).toBeNull();
+  });
+
+  it("reports an unsuccessful remote revocation after clearing the local session", async () => {
+    writeSession(session);
+    fetchMock.mockResolvedValueOnce(jsonResponse({ message: "Unauthorized" }, 401));
+
+    await expect(logout()).resolves.toEqual({ remoteRevocation: "failed", status: 401 });
+
+    expect(readSession()).toBeNull();
+  });
+
+  it("does not restore a session when refresh finishes after logout", async () => {
+    writeSession(session);
+    var resolveRefresh: (response: Response) => void = () => undefined;
+    const pendingRefresh = new Promise<Response>((resolve) => {
+      resolveRefresh = resolve;
+    });
+
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ message: "Unauthorized" }, 401))
+      .mockReturnValueOnce(pendingRefresh)
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+    const request = apiFetch("/api/users");
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    const logoutRequest = logout();
+    expect(readSession()).toBeNull();
+    resolveRefresh(jsonResponse(refreshedSession));
+
+    await expect(logoutRequest).resolves.toEqual({ remoteRevocation: "succeeded" });
+    await expect(request).rejects.toEqual(new ApiError("Request failed", 401));
     expect(readSession()).toBeNull();
   });
 });

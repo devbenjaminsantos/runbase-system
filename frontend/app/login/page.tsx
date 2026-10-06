@@ -21,10 +21,15 @@ export default function LoginPage() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [setupKey, setSetupKey] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     let isActive = true;
+
+    if (new URLSearchParams(window.location.search).get("logout") === "local-only") {
+      setNotice("Your local session was cleared, but remote token revocation could not be confirmed.");
+    }
 
     getInitialSetupStatus()
       .then((status) => {
@@ -215,6 +220,7 @@ export default function LoginPage() {
             </>
           ) : null}
           {error ? <div className="alert alert-error">{error}</div> : null}
+          {notice ? <div className="alert alert-info">{notice}</div> : null}
           <div className="login-form-footer">
             <span><span className="login-status-dot" /> Authentication gateway</span>
             <span>RunBase <ArrowUpRight aria-hidden size={13} /></span>

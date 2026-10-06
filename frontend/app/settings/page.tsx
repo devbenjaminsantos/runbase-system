@@ -49,8 +49,8 @@ function SettingsContent({ initialUser }: { initialUser: UserProfile }) {
   }
 
   async function handleLogout() {
-    await logout();
-    router.replace("/login");
+    const result = await logout();
+    router.replace(result.remoteRevocation === "failed" ? "/login?logout=local-only" : "/login");
   }
 
   return (

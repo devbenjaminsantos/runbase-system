@@ -6,7 +6,12 @@ import type {
 } from "./types";
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5140";
-let activeRefresh: Promise<boolean> | null = null;
+let activeRefresh: { refreshToken: string; promise: Promise<boolean> } | null = null;
+
+export type LogoutResult =
+  | { remoteRevocation: "succeeded" }
+  | { remoteRevocation: "failed"; status?: number }
+  | { remoteRevocation: "not-required" };
 
 export class ApiError extends Error {
   constructor(
@@ -61,24 +66,30 @@ export async function login(email: string, password: string): Promise<AuthTokenR
   return response.json() as Promise<AuthTokenResponse>;
 }
 
-export async function logout(): Promise<void> {
+export async function logout(): Promise<LogoutResult> {
   var session = readSession();
+  clearSession();
 
   if (!session) {
-    clearSession();
-    return;
+    return { remoteRevocation: "not-required" };
   }
 
-  await fetch(`${apiBaseUrl}/api/auth/logout`, {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${session.accessToken}`,
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({ refreshToken: session.refreshToken })
-  });
+  try {
+    var response = await fetch(`${apiBaseUrl}/api/auth/logout`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${session.accessToken}`,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({ refreshToken: session.refreshToken })
+    });
 
-  clearSession();
+    return response.ok
+      ? { remoteRevocation: "succeeded" }
+      : { remoteRevocation: "failed", status: response.status };
+  } catch {
+    return { remoteRevocation: "failed" };
+  }
 }
 
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -118,22 +129,28 @@ async function fetchWithAccessToken(path: string, init: RequestInit): Promise<Re
 }
 
 function refreshSessionOnce(): Promise<boolean> {
-  if (!activeRefresh) {
-    activeRefresh = refreshSession().finally(() => {
-      activeRefresh = null;
-    });
-  }
-
-  return activeRefresh;
-}
-
-async function refreshSession(): Promise<boolean> {
   var session = readSession();
 
   if (!session) {
-    return false;
+    return Promise.resolve(false);
   }
 
+  if (activeRefresh?.refreshToken === session.refreshToken) {
+    return activeRefresh.promise;
+  }
+
+  var refreshToken = session.refreshToken;
+  var promise = refreshSession(session).finally(() => {
+    if (activeRefresh?.promise === promise) {
+      activeRefresh = null;
+    }
+  });
+
+  activeRefresh = { refreshToken, promise };
+  return promise;
+}
+
+async function refreshSession(session: AuthTokenResponse): Promise<boolean> {
   var response = await fetch(`${apiBaseUrl}/api/auth/refresh`, {
     method: "POST",
     headers: {
@@ -141,6 +158,12 @@ async function refreshSession(): Promise<boolean> {
     },
     body: JSON.stringify({ refreshToken: session.refreshToken })
   });
+
+  var currentSession = readSession();
+
+  if (currentSession?.refreshToken !== session.refreshToken) {
+    return false;
+  }
 
   if (!response.ok) {
     clearSession();
